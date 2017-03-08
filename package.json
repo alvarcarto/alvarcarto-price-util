@@ -2,7 +2,7 @@
   "name": "alvarcarto-price-util",
   "version": "1.0.0",
   "description": "Calculates Alvar Carto prices",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kimmobrunfeldt/alvarcarto-price-util.git"
@@ -10,15 +10,22 @@
   "author": "Kimmo Brunfeldt",
   "license": "MIT",
   "homepage": "https://github.com/kimmobrunfeldt/alvarcarto-price-util#readme",
+  "dependencies": {
+    "lodash": "^4.16.2"
+  },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-env": "^1.2.1",
     "eslint": "^3.5.0",
     "eslint-config-airbnb-base": "^7.1.0",
     "eslint-plugin-import": "^1.15.0",
-    "lodash": "^4.16.2",
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "np": "^2.12.0"
   },
   "scripts": {
     "test": "mocha",
-    "lint": "eslint ./src ./test"
+    "lint": "eslint ./src ./test",
+    "version": "npm run build && git add dist",
+    "build": "babel src --out-dir dist"
   }
 }
