@@ -1,5 +1,4 @@
 const assert = require('assert');
-const _ = require('lodash');
 const priceUtil = require('../src/index');
 
 describe('basic cases', () => {
@@ -12,12 +11,29 @@ describe('basic cases', () => {
       },
     ];
 
-    const price = priceUtil.calculateCartPrice(cart)
+    const price = priceUtil.calculateCartPrice(cart);
     assert.deepEqual(price, {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
-      label: '39.00 €'
+      label: '39.00 €',
+    });
+  });
+
+  it('unit price for 3x 30x40cm in cart', () => {
+    const cart = [
+      {
+        quantity: 3,
+        size: '30x40cm',
+      },
+    ];
+
+    const price = priceUtil.calculateUnitPrice(cart[0].size);
+    assert.deepEqual(price, {
+      value: 3900,
+      humanValue: '39.00',
+      currency: 'EUR',
+      label: '39.00 €',
     });
   });
 
@@ -37,7 +53,7 @@ describe('basic cases', () => {
       },
     ];
 
-    const price = priceUtil.calculateCartPrice(cart)
+    const price = priceUtil.calculateCartPrice(cart);
     assert.deepEqual(price, {
       value: 20600,
       humanValue: '206.00',

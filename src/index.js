@@ -15,9 +15,7 @@ function calculateCartPrice(cart) {
     };
   }, { value: 0, currency: null });
 
-  total.label = _toLabel(total);
-  total.humanValue = _toHumanValue(total);
-  return total;
+  return _createPriceObject(total);
 }
 
 function calculateItemPrice(item, opts = {}) {
@@ -27,26 +25,36 @@ function calculateItemPrice(item, opts = {}) {
     if (!_.isInteger(item.quantity)) {
       throw new Error(`Item quantity should be an integer. Item: ${item}`);
     }
+    if (item.quantity < 1) {
+      throw new Error(`Item quantity should at least 1. Item: ${item}`);
+    }
 
     price.value *= item.quantity;
   }
 
-  price.label = _toLabel(price);
-  price.humanValue = _toHumanValue(price);
   return price;
 }
 
 function calculateUnitPrice(size) {
   switch (size) {
     case '30x40cm':
-      return { value: 3900, currency: 'EUR' };
+      return _createPriceObject({ value: 3900, currency: 'EUR' });
     case '50x70cm':
-      return { value: 4900, currency: 'EUR' };
+      return _createPriceObject({ value: 4900, currency: 'EUR' });
     case '70x100cm':
-      return { value: 6900, currency: 'EUR' };
+      return _createPriceObject({ value: 6900, currency: 'EUR' });
     default:
       throw new Error(`Invalid size: ${size}`);
   }
+}
+
+function _createPriceObject(basicPriceObj) {
+  const fullPriceObj = _.merge({}, basicPriceObj, {
+    label: _toLabel(basicPriceObj),
+    humanValue: _toHumanValue(basicPriceObj),
+  });
+
+  return fullPriceObj
 }
 
 function _toLabel(price) {
