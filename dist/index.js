@@ -7,6 +7,7 @@ var SYMBOLS = {
   EUR: '\u20AC'
 };
 
+// Price value is in cents
 function calculateCartPrice(cart) {
   var total = _.reduce(cart, function (memo, item) {
     var itemPrice = calculateItemPrice(item);
@@ -40,18 +41,18 @@ function calculateItemPrice(item) {
 function calculateUnitPrice(size) {
   switch (size) {
     case '30x40cm':
-      return { value: 39, currency: 'EUR' };
+      return { value: 3900, currency: 'EUR' };
     case '50x70cm':
-      return { value: 49, currency: 'EUR' };
+      return { value: 4900, currency: 'EUR' };
     case '70x100cm':
-      return { value: 69, currency: 'EUR' };
+      return { value: 6900, currency: 'EUR' };
     default:
       throw new Error('Invalid size: ' + size);
   }
 }
 
 function _toLabel(price) {
-  return price.value.toFixed(2) + ' ' + getCurrencySymbol(price.currency);
+  return (price.value / 100.0).toFixed(2) + ' ' + getCurrencySymbol(price.currency);
 }
 
 function getCurrencySymbol(currency) {
