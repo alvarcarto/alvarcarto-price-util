@@ -16,6 +16,7 @@ function calculateCartPrice(cart) {
   }, { value: 0, currency: null });
 
   total.label = _toLabel(total);
+  total.humanValue = _toHumanValue(total);
   return total;
 }
 
@@ -31,6 +32,7 @@ function calculateItemPrice(item, opts = {}) {
   }
 
   price.label = _toLabel(price);
+  price.humanValue = _toHumanValue(price);
   return price;
 }
 
@@ -48,7 +50,11 @@ function calculateUnitPrice(size) {
 }
 
 function _toLabel(price) {
-  return `${(price.value / 100.0).toFixed(2)} ${getCurrencySymbol(price.currency)}`;
+  return `${_toHumanValue(price)} ${getCurrencySymbol(price.currency)}`;
+}
+
+function _toHumanValue(price) {
+  return (price.value / 100.0).toFixed(2);
 }
 
 function getCurrencySymbol(currency) {
