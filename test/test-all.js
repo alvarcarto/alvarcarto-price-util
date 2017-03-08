@@ -13,7 +13,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart)
-    assert.deepEqual(price, { value: 39, currency: 'EUR', label: '39.00 €' });
+    assert.deepEqual(price, { value: 3900, currency: 'EUR', label: '39.00 €' });
   });
 
   it('30x40cm, 50x70cm and 70x100cm in cart', () => {
@@ -33,7 +33,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart)
-    assert.deepEqual(price, { value: 206, currency: 'EUR', label: '206.00 €' });
+    assert.deepEqual(price, { value: 20600, currency: 'EUR', label: '206.00 €' });
   });
 
   it('invalid poster size should throw an error', () => {
