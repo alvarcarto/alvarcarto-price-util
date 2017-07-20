@@ -162,6 +162,38 @@ describe('basic cases', () => {
     });
   });
 
+  it('percentage discount which doubles the price', () => {
+    const cart = [
+      {
+        // Price: 3 * 39€ = 117€
+        quantity: 3,
+        size: '30x40cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'PERCENTAGE',
+      value: -1.0,
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, promotion);
+    assert.deepEqual(price, {
+      value: 23400,
+      humanValue: '234.00',
+      currency: 'EUR',
+      label: '234.00 €',
+      discount: {
+        // Negative discount means you pay more
+        value: -11700,
+        humanValue: '-117.00',
+        currency: 'EUR',
+        label: '-117.00 €',
+      },
+    });
+  });
+
   it('inconsistent currencies between cart and promotion should throw an error', () => {
     const cart = [
       {
