@@ -259,4 +259,37 @@ describe('basic cases', () => {
       /Promotion \(TEST\) has expired/
     );
   });
+
+  it('expired promotion should not throw an error when ignorePromotionExpiry: true', () => {
+    const cart = [
+      {
+        quantity: 1,
+        size: '30x40cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      currency: 'EUR',
+      value: 500,
+      promotionCode: 'TEST',
+      hasExpired: true,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, promotion, {
+      ignorePromotionExpiry: true,
+    });
+    assert.deepEqual(price, {
+      value: 3400,
+      humanValue: '34.00',
+      currency: 'EUR',
+      label: '34.00 €',
+      discount: {
+        value: 500,
+        humanValue: '5.00',
+        currency: 'EUR',
+        label: '5.00 €',
+      },
+    });
+  });
 });

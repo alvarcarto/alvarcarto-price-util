@@ -9,6 +9,8 @@ var SYMBOLS = {
 
 // Price value is in cents
 function calculateCartPrice(cart, promotion) {
+  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   var total = _.reduce(cart, function (memo, item) {
     var itemPrice = calculateItemPrice(item);
     return {
@@ -18,7 +20,7 @@ function calculateCartPrice(cart, promotion) {
   }, { value: 0, currency: null });
 
   var totalPriceObj = _createPriceObject(total);
-  return _calculateDiscountTotal(totalPriceObj, promotion);
+  return _calculateDiscountTotal(totalPriceObj, promotion, opts);
 }
 
 function calculateItemPrice(item) {
@@ -54,11 +56,13 @@ function calculateUnitPrice(size) {
 }
 
 function _calculateDiscountTotal(total, promotion) {
+  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
   if (!promotion) {
     return total;
   }
 
-  if (_.get(promotion, 'hasExpired')) {
+  if (!opts.ignorePromotionExpiry && _.get(promotion, 'hasExpired')) {
     throw new Error('Promotion (' + promotion.promotionCode + ') has expired');
   }
 
