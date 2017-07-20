@@ -8,7 +8,7 @@ var SYMBOLS = {
 };
 
 // Price value is in cents
-function calculateCartPrice(cart) {
+function calculateCartPrice(cart, promotion) {
   var total = _.reduce(cart, function (memo, item) {
     var itemPrice = calculateItemPrice(item);
     return {
@@ -17,7 +17,8 @@ function calculateCartPrice(cart) {
     };
   }, { value: 0, currency: null });
 
-  return _createPriceObject(total);
+  var totalPriceObj = _createPriceObject(total);
+  return _calculateDiscountTotal(totalPriceObj, promotion);
 }
 
 function calculateItemPrice(item) {
@@ -49,6 +50,49 @@ function calculateUnitPrice(size) {
       return _createPriceObject({ value: 6900, currency: 'EUR' });
     default:
       throw new Error('Invalid size: ' + size);
+  }
+}
+
+function _calculateDiscountTotal(total, promotion) {
+  if (!promotion) {
+    return total;
+  }
+
+  if (_.get(promotion, 'hasExpired')) {
+    throw new Error('Promotion (' + promotion.promotionCode + ') has expired');
+  }
+
+  var discount = promotionToDiscount(total, promotion);
+  var newTotal = _createPriceObject({
+    value: total.value - discount.value,
+    currency: total.currency
+  });
+
+  return _.merge({}, newTotal, { discount: discount });
+}
+
+function promotionToDiscount(total, promotion) {
+  switch (promotion.type) {
+    case 'FIXED':
+      if (total.currency !== promotion.currency) {
+        throw new Error('Promotion currency mismatches the total value: ' + total.currency + ' !== ' + promotion.currency);
+      }
+      return _createPriceObject({
+        value: promotion.value,
+        currency: promotion.currency
+      });
+
+    case 'PERCENTAGE':
+      return _createPriceObject({
+        // total.value is total price in the currency's lowest amount, e.g. cents
+        // promotion.value is a factor, e.g. 0.2 (-20%) to describe the percentage
+        // discount
+        value: Math.round(total.value * promotion.value),
+        currency: total.currency
+      });
+
+    default:
+      throw new Error('Invalid promotion type: ' + promotion.type);
   }
 }
 
