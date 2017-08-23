@@ -75,19 +75,21 @@ function _calculateDiscountTotal(total, promotion) {
   return _.merge({}, newTotal, { discount: discount });
 }
 
+// IMPORTANT!
+// _createDiscountPriceObject must be used to create the discount price
 function promotionToDiscount(total, promotion) {
   switch (promotion.type) {
     case 'FIXED':
       if (total.currency !== promotion.currency) {
         throw new Error('Promotion currency mismatches the total value: ' + total.currency + ' !== ' + promotion.currency);
       }
-      return _createPriceObject({
+      return _createDiscountPriceObject(total.value, {
         value: promotion.value,
         currency: promotion.currency
       });
 
     case 'PERCENTAGE':
-      return _createPriceObject({
+      return _createDiscountPriceObject(total.value, {
         // total.value is total price in the currency's lowest amount, e.g. cents
         // promotion.value is a factor, e.g. 0.2 (-20%) to describe the percentage
         // discount
@@ -98,6 +100,14 @@ function promotionToDiscount(total, promotion) {
     default:
       throw new Error('Invalid promotion type: ' + promotion.type);
   }
+}
+
+function _createDiscountPriceObject(totalValue, promotionPriceObj) {
+  return _createPriceObject({
+    // Make sure the discount can't be more than the total value.
+    value: Math.min(totalValue, promotionPriceObj.value),
+    currency: promotionPriceObj.currency
+  });
 }
 
 function _createPriceObject(basicPriceObj) {

@@ -112,7 +112,7 @@ describe('basic cases', () => {
       value: 1020,
       promotionCode: 'TEST',
       hasExpired: false,
-    }
+    };
 
     const price = priceUtil.calculateCartPrice(cart, promotion);
     assert.deepEqual(price, {
@@ -190,6 +190,69 @@ describe('basic cases', () => {
         humanValue: '-117.00',
         currency: 'EUR',
         label: '-117.00 €',
+      },
+    });
+  });
+
+  it('percentage discount which is bigger than the price should cause zero price', () => {
+    const cart = [
+      {
+        // Price: 39€
+        quantity: 1,
+        size: '30x40cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'PERCENTAGE',
+      value: 1.2,
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, promotion);
+    assert.deepEqual(price, {
+      value: 0,
+      humanValue: '0.00',
+      currency: 'EUR',
+      label: '0.00 €',
+      discount: {
+        value: 3900,
+        humanValue: '39.00',
+        currency: 'EUR',
+        label: '39.00 €',
+      },
+    });
+  });
+
+  it('fixed discount which is bigger than the price should cause zero price', () => {
+    const cart = [
+      {
+        // Price: 39€
+        quantity: 1,
+        size: '30x40cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      value: 5000,
+      currency: 'EUR',
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, promotion);
+    assert.deepEqual(price, {
+      value: 0,
+      humanValue: '0.00',
+      currency: 'EUR',
+      label: '0.00 €',
+      discount: {
+        value: 3900,
+        humanValue: '39.00',
+        currency: 'EUR',
+        label: '39.00 €',
       },
     });
   });
