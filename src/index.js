@@ -1,4 +1,7 @@
 const _ = require('lodash');
+const { isEuCountry } = require('./country');
+
+const FINLAND_VAT_PERCENTAGE = 24.0;
 
 // TODO: Use currency lib
 const SYMBOLS = {
@@ -6,7 +9,7 @@ const SYMBOLS = {
 };
 
 // Price value is in cents
-function calculateCartPrice(cart, promotion, opts = {}) {
+function calculateCartPrice(cart, opts = {}) {
   const total = _.reduce(cart, (memo, item) => {
     const itemPrice = calculateItemPrice(item);
     return {
@@ -16,7 +19,19 @@ function calculateCartPrice(cart, promotion, opts = {}) {
   }, { value: 0, currency: null });
 
   const totalPriceObj = _createPriceObject(total);
-  return _calculateDiscountTotal(totalPriceObj, promotion, opts);
+  const discountedPriceObj = _calculateDiscountTotal(totalPriceObj, opts);
+  if (!opts.shipToCountry && !opts.taxPercentage) {
+    return discountedPriceObj;
+  }
+
+  let taxPercentage;
+  if (opts.taxPercentage) {
+    taxPercentage = opts.taxPercentage;
+  } else {
+    taxPercentage = isEuCountry(opts.shipToCountry) ? FINLAND_VAT_PERCENTAGE : 0;
+  }
+
+  return _addTax(discountedPriceObj, taxPercentage);
 }
 
 function calculateItemPrice(item, opts = {}) {
@@ -49,7 +64,38 @@ function calculateUnitPrice(size) {
   }
 }
 
-function _calculateDiscountTotal(total, promotion, opts = {}) {
+function _addTax(totalPrice, taxPercentage) {
+  const grossValue = totalPrice.value;
+  const taxObj = _createPriceObject({
+    value: getTaxValue(grossValue, taxPercentage),
+    currency: totalPrice.currency,
+  });
+
+  const netObj = _createPriceObject({
+    value: getNetValue(grossValue, taxPercentage),
+    currency: totalPrice.currency,
+  });
+
+  return _.merge({}, totalPrice, {
+    net: netObj,
+    tax: taxObj,
+  });
+}
+
+function getNetValue(grossValue, taxPercentage) {
+  const taxValue = getTaxValue(grossValue, taxPercentage);
+  return Math.round(grossValue - taxValue);  // in cents
+}
+
+function getTaxValue(grossValue, taxPercentage) {
+  const taxFactor = taxPercentage / 100.0;
+  const netValue = grossValue / (1.0 + taxFactor);
+  const taxValue = grossValue - netValue;
+  return Math.round(taxValue);  // in cents
+}
+
+function _calculateDiscountTotal(total, opts = {}) {
+  const { promotion } = opts;
   if (!promotion) {
     return total;
   }

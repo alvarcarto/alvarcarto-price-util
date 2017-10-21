@@ -11,12 +11,24 @@ describe('basic cases', () => {
       },
     ];
 
-    const price = priceUtil.calculateCartPrice(cart);
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'FI' });
     assert.deepEqual(price, {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
       label: '39.00 €',
+      net: {
+        value: 3145,
+        humanValue: '31.45',
+        currency: 'EUR',
+        label: '31.45 €',
+      },
+      tax: {
+        value: 755,
+        humanValue: '7.55',
+        currency: 'EUR',
+        label: '7.55 €',
+      },
     });
   });
 
@@ -58,7 +70,7 @@ describe('basic cases', () => {
       value: 20600,
       humanValue: '206.00',
       currency: 'EUR',
-      label: '206.00 €'
+      label: '206.00 €',
     });
   });
 
@@ -114,7 +126,7 @@ describe('basic cases', () => {
       hasExpired: false,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion);
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
     assert.deepEqual(price, {
       value: 19580,
       humanValue: '195.80',
@@ -147,7 +159,7 @@ describe('basic cases', () => {
       hasExpired: false,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion);
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
     assert.deepEqual(price, {
       value: 20810,
       humanValue: '208.10',
@@ -178,12 +190,24 @@ describe('basic cases', () => {
       hasExpired: false,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion);
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'FI', promotion });
     assert.deepEqual(price, {
       value: 23400,
       humanValue: '234.00',
       currency: 'EUR',
       label: '234.00 €',
+      net: {
+        currency: 'EUR',
+        humanValue: '188.71',
+        label: '188.71 €',
+        value: 18871,
+      },
+      tax: {
+        currency: 'EUR',
+        humanValue: '45.29',
+        label: '45.29 €',
+        value: 4529,
+      },
       discount: {
         // Negative discount means you pay more
         value: -11700,
@@ -210,12 +234,24 @@ describe('basic cases', () => {
       hasExpired: false,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion);
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'FI', promotion });
     assert.deepEqual(price, {
       value: 0,
       humanValue: '0.00',
       currency: 'EUR',
       label: '0.00 €',
+      net: {
+        value: 0,
+        humanValue: '0.00',
+        currency: 'EUR',
+        label: '0.00 €',
+      },
+      tax: {
+        value: 0,
+        humanValue: '0.00',
+        currency: 'EUR',
+        label: '0.00 €',
+      },
       discount: {
         value: 3900,
         humanValue: '39.00',
@@ -242,7 +278,7 @@ describe('basic cases', () => {
       hasExpired: false,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion);
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
     assert.deepEqual(price, {
       value: 0,
       humanValue: '0.00',
@@ -274,7 +310,7 @@ describe('basic cases', () => {
     };
 
     assert.throws(
-      () => priceUtil.calculateCartPrice(cart, promotion),
+      () => priceUtil.calculateCartPrice(cart, { promotion }),
       /Promotion currency mismatches the total value/
     );
   });
@@ -296,7 +332,7 @@ describe('basic cases', () => {
     };
 
     assert.throws(
-      () => priceUtil.calculateCartPrice(cart, promotion),
+      () => priceUtil.calculateCartPrice(cart, { promotion }),
       /Invalid promotion type/
     );
   });
@@ -318,7 +354,7 @@ describe('basic cases', () => {
     };
 
     assert.throws(
-      () => priceUtil.calculateCartPrice(cart, promotion),
+      () => priceUtil.calculateCartPrice(cart, { promotion }),
       /Promotion \(TEST\) has expired/
     );
   });
@@ -339,7 +375,8 @@ describe('basic cases', () => {
       hasExpired: true,
     };
 
-    const price = priceUtil.calculateCartPrice(cart, promotion, {
+    const price = priceUtil.calculateCartPrice(cart, {
+      promotion,
       ignorePromotionExpiry: true,
     });
     assert.deepEqual(price, {
@@ -352,6 +389,43 @@ describe('basic cases', () => {
         humanValue: '5.00',
         currency: 'EUR',
         label: '5.00 €',
+      },
+    });
+  });
+
+  it('case where net + tax are both ".5 cents"', () => {
+    const cart = [
+      {
+        quantity: 20,
+        size: '30x40cm',
+        // Other fields are not used
+      },
+    ];
+
+    // This is a somewhat theoretical example. There are a lot of gross prices
+    // where this same "bug" occurs but with Finland's current VAT %, this
+    // never happens.
+    const price = priceUtil.calculateCartPrice(cart, { taxPercentage: 28 });
+    assert.deepEqual(price, {
+      value: 78000,
+      humanValue: '780.00',
+      currency: 'EUR',
+      label: '780.00 €',
+      net: {
+        // The exact sum is 60937.5 cents
+        // but net value is rounded down, to make net + tax equal gross price
+        value: 60937,
+        humanValue: '609.37',
+        currency: 'EUR',
+        label: '609.37 €',
+      },
+      tax: {
+        // The exact sum is 17062.5 cents
+        // but the tax value is rounded normally (up)
+        value: 17063,
+        humanValue: '170.63',
+        currency: 'EUR',
+        label: '170.63 €',
       },
     });
   });
