@@ -2,14 +2,19 @@
 
 var _ = require('lodash');
 
+var _require = require('./country'),
+    isEuCountry = _require.isEuCountry;
+
+var FINLAND_VAT_PERCENTAGE = 24.0;
+
 // TODO: Use currency lib
 var SYMBOLS = {
   EUR: '\u20AC'
 };
 
 // Price value is in cents
-function calculateCartPrice(cart, promotion) {
-  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+function calculateCartPrice(cart) {
+  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   var total = _.reduce(cart, function (memo, item) {
     var itemPrice = calculateItemPrice(item);
@@ -20,7 +25,19 @@ function calculateCartPrice(cart, promotion) {
   }, { value: 0, currency: null });
 
   var totalPriceObj = _createPriceObject(total);
-  return _calculateDiscountTotal(totalPriceObj, promotion, opts);
+  var discountedPriceObj = _calculateDiscountTotal(totalPriceObj, opts);
+  if (!opts.shipToCountry && !opts.taxPercentage) {
+    return discountedPriceObj;
+  }
+
+  var taxPercentage = void 0;
+  if (opts.taxPercentage) {
+    taxPercentage = opts.taxPercentage;
+  } else {
+    taxPercentage = isEuCountry(opts.shipToCountry) ? FINLAND_VAT_PERCENTAGE : 0;
+  }
+
+  return _addTax(discountedPriceObj, taxPercentage);
 }
 
 function calculateItemPrice(item) {
@@ -55,8 +72,39 @@ function calculateUnitPrice(size) {
   }
 }
 
-function _calculateDiscountTotal(total, promotion) {
-  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+function _addTax(totalPrice, taxPercentage) {
+  var grossValue = totalPrice.value;
+  var taxObj = _createPriceObject({
+    value: getTaxValue(grossValue, taxPercentage),
+    currency: totalPrice.currency
+  });
+
+  var netObj = _createPriceObject({
+    value: getNetValue(grossValue, taxPercentage),
+    currency: totalPrice.currency
+  });
+
+  return _.merge({}, totalPrice, {
+    net: netObj,
+    tax: taxObj
+  });
+}
+
+function getNetValue(grossValue, taxPercentage) {
+  var taxValue = getTaxValue(grossValue, taxPercentage);
+  return Math.round(grossValue - taxValue); // in cents
+}
+
+function getTaxValue(grossValue, taxPercentage) {
+  var taxFactor = taxPercentage / 100.0;
+  var netValue = grossValue / (1.0 + taxFactor);
+  var taxValue = grossValue - netValue;
+  return Math.round(taxValue); // in cents
+}
+
+function _calculateDiscountTotal(total) {
+  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var promotion = opts.promotion;
 
   if (!promotion) {
     return total;
