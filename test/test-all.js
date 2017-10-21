@@ -24,6 +24,7 @@ describe('basic cases', () => {
         label: '31.45 €',
       },
       tax: {
+        taxPercentage: 24,
         value: 755,
         humanValue: '7.55',
         currency: 'EUR',
@@ -203,6 +204,7 @@ describe('basic cases', () => {
         value: 18871,
       },
       tax: {
+        taxPercentage: 24,
         currency: 'EUR',
         humanValue: '45.29',
         label: '45.29 €',
@@ -247,6 +249,7 @@ describe('basic cases', () => {
         label: '0.00 €',
       },
       tax: {
+        taxPercentage: 24,
         value: 0,
         humanValue: '0.00',
         currency: 'EUR',
@@ -420,6 +423,7 @@ describe('basic cases', () => {
         label: '609.37 €',
       },
       tax: {
+        taxPercentage: 28,
         // The exact sum is 17062.5 cents
         // but the tax value is rounded normally (up)
         value: 17063,
