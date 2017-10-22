@@ -74,9 +74,11 @@ function calculateUnitPrice(size) {
 
 function _addTax(totalPrice, taxPercentage) {
   var grossValue = totalPrice.value;
-  var taxObj = _createPriceObject({
+  var taxObj = _.merge({}, _createPriceObject({
     value: getTaxValue(grossValue, taxPercentage),
     currency: totalPrice.currency
+  }), {
+    taxPercentage: taxPercentage
   });
 
   var netObj = _createPriceObject({
