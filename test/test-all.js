@@ -75,6 +75,97 @@ describe('basic cases', () => {
     });
   });
 
+  it('gift card in cart', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: 4900,
+        quantity: 1,
+      },
+      {
+        type: 'physicalGiftCard',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepEqual(price, {
+      value: 5590,
+      humanValue: '55.90',
+      currency: 'EUR',
+      label: '55.90 €',
+    });
+  });
+
+  it('negative gift card value should not be accepted', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: -4900,
+        quantity: 1,
+      }
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Gift card value must be positive:/
+    );
+  });
+
+  it('zero gift card value should not be accepted', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: 0,
+        quantity: 1,
+      }
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Gift card value must be positive:/
+    );
+  });
+
+  it('Unknown cart item types should not be accepted', () => {
+    const cart = [
+      {
+        type: 'noSuchProduct',
+        size: '30x40cm',
+        quantity: 1,
+      }
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Invalid item type/
+    );
+  });
+
+  // This is not something we're yet supporting in the UI, but price
+  // calculation works
+  it('multiple gift cards in cart', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: 4101,  // This can be any value
+        quantity: 2,
+      },
+      {
+        type: 'physicalGiftCard',
+        quantity: 3,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepEqual(price, {
+      value: 10272,
+      humanValue: '102.72',
+      currency: 'EUR',
+      label: '102.72 €',
+    });
+  });
+
   it('invalid poster size should throw an error', () => {
     const cart = [
       {

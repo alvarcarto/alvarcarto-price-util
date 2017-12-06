@@ -35,7 +35,9 @@ function calculateCartPrice(cart, opts = {}) {
 }
 
 function calculateItemPrice(item, opts = {}) {
-  const price = calculateUnitPrice(item.size);
+  const price = _.isString(item.type)
+    ? calculateUnitPriceForSpecialItem(item)
+    : calculateUnitPrice(item.size);
 
   if (!opts.onlyUnitPrice) {
     if (!_.isInteger(item.quantity)) {
@@ -61,6 +63,21 @@ function calculateUnitPrice(size) {
       return _createPriceObject({ value: 6900, currency: 'EUR' });
     default:
       throw new Error(`Invalid size: ${size}`);
+  }
+}
+
+function calculateUnitPriceForSpecialItem(item) {
+  switch (item.type) {
+    case 'physicalGiftCard':
+      return _createPriceObject({ value: 690, currency: 'EUR' });
+    case 'giftCardValue':
+      if (item.value <= 0) {
+        throw new Error(`Gift card value must be positive: ${item.value}`);
+      }
+
+      return _createPriceObject({ value: item.value, currency: 'EUR' });
+    default:
+      throw new Error(`Invalid item type: ${item.type}`);
   }
 }
 
