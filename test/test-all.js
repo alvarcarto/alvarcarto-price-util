@@ -142,6 +142,40 @@ describe('basic cases', () => {
     );
   });
 
+  it('item price calculation for gift card value should work', () => {
+    const price = priceUtil.calculateItemPrice({
+      type: 'giftCardValue',
+      quantity: 1,
+      value: 4900,
+    });
+    assert.deepEqual(price, {
+      value: 4900,
+      humanValue: '49.00',
+      currency: 'EUR',
+      label: '49.00 €',
+    });
+  });
+
+  it('item price calculation for physical gift card should work', () => {
+    const price = priceUtil.calculateItemPrice({
+      type: 'physicalGiftCard',
+      quantity: 1,
+    });
+    assert.deepEqual(price, {
+      value: 690,
+      humanValue: '6.90',
+      currency: 'EUR',
+      label: '6.90 €',
+    });
+  });
+
+  it('quantity is required for gift card', () => {
+    assert.throws(
+      () => priceUtil.calculateItemPrice({ type: 'giftCardValue', value: 4900 }),
+      /Item quantity should be an integer/
+    );
+  });
+
   // This is not something we're yet supporting in the UI, but price
   // calculation works
   it('multiple gift cards in cart', () => {
