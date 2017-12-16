@@ -5,6 +5,7 @@ describe('basic cases', () => {
   it('one 30x40cm in cart', () => {
     const cart = [
       {
+        type: 'mapPoster',
         quantity: 1,
         size: '30x40cm',
         // Other fields are not used
@@ -557,5 +558,20 @@ describe('basic cases', () => {
         label: '170.63 €',
       },
     });
+  });
+
+  it('expired promotion should throw an error', () => {
+    const cart = [
+      {
+        type: 'unexisting',
+        quantity: 1,
+        size: '30x40cm',
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Invalid item type: unexisting/
+    );
   });
 });

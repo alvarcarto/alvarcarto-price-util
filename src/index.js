@@ -74,8 +74,9 @@ function calculateUnitPriceForSpecialItem(item) {
       if (item.value <= 0) {
         throw new Error(`Gift card value must be positive: ${item.value}`);
       }
-
       return _createPriceObject({ value: item.value, currency: 'EUR' });
+    case 'mapPoster':
+      return calculateUnitPrice(item.size);
     default:
       throw new Error(`Invalid item type: ${item.type}`);
   }
