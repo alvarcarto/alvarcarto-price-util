@@ -77,8 +77,8 @@ function calculateUnitPriceForSpecialItem(item) {
     case 'physicalGiftCard':
       return _createPriceObject({ value: 690, currency: 'EUR' });
     case 'giftCardValue':
-      if (item.value <= 0) {
-        throw new Error('Gift card value must be positive: ' + item.value);
+      if (item.value < 1000) {
+        throw new Error('Gift card value must be at least 1000. Got: ' + item.value);
       }
       return _createPriceObject({ value: item.value, currency: 'EUR' });
     case 'mapPoster':

@@ -109,7 +109,7 @@ describe('basic cases', () => {
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Gift card value must be positive:/
+      /Gift card value must be at least 1000./
     );
   });
 
@@ -124,7 +124,22 @@ describe('basic cases', () => {
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Gift card value must be positive:/
+      /Gift card value must be at least 1000./
+    );
+  });
+
+  it('too low gift card value should not be accepted', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: 999,
+        quantity: 1,
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Gift card value must be at least 1000./
     );
   });
 
