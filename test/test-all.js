@@ -529,6 +529,133 @@ describe('basic cases', () => {
     });
   });
 
+  it('promotion should not affect shipping or production class prices', () => {
+    const cart = [
+      {
+        type: 'productionClass',
+        value: 'HIGH',
+        quantity: 1,
+      },
+      {
+        type: 'shippingClass',
+        value: 'EXPRESS',
+        quantity: 1,
+      },
+      {
+        quantity: 1,
+        size: '70x100cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      currency: 'EUR',
+      value: 10000,
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
+    assert.deepEqual(price, {
+      value: 1500,
+      humanValue: '15.00',
+      currency: 'EUR',
+      label: '15.00 €',
+      discount: {
+        value: 6900,
+        humanValue: '69.00',
+        currency: 'EUR',
+        label: '69.00 €',
+      },
+    });
+  });
+
+  it('PLATINUM promotion allows discount for any product', () => {
+    const cart = [
+      {
+        type: 'productionClass',
+        value: 'HIGH',
+        quantity: 1,
+      },
+      {
+        type: 'shippingClass',
+        value: 'EXPRESS',
+        quantity: 1,
+      },
+      {
+        quantity: 1,
+        size: '70x100cm',
+      },
+      {
+        type: 'giftCardValue',
+        value: 6900,
+        quantity: 1,
+      },
+      {
+        type: 'physicalGiftCard',
+        quantity: 1,
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      currency: 'EUR',
+      value: 100000,
+      promotionCode: 'PLATINUM',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
+    assert.deepEqual(price, {
+      value: 0,
+      humanValue: '0.00',
+      currency: 'EUR',
+      label: '0.00 €',
+      discount: {
+        value: 15990,
+        humanValue: '159.90',
+        currency: 'EUR',
+        label: '159.90 €',
+      },
+    });
+  });
+
+  it('promotion should not affect shipping or production class prices', () => {
+    const cart = [
+      {
+        type: 'giftCardValue',
+        value: 6900,
+        quantity: 1,
+      },
+      {
+        type: 'physicalGiftCard',
+        quantity: 1,
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      currency: 'EUR',
+      value: 10000,
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    const price = priceUtil.calculateCartPrice(cart, { promotion });
+    assert.deepEqual(price, {
+      value: 7590,
+      humanValue: '75.90',
+      currency: 'EUR',
+      label: '75.90 €',
+      discount: {
+        value: 0,
+        humanValue: '0.00',
+        currency: 'EUR',
+        label: '0.00 €',
+      },
+    });
+  });
+
   it('inconsistent currencies between cart and promotion should throw an error', () => {
     const cart = [
       {

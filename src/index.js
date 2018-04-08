@@ -10,16 +10,14 @@ const SYMBOLS = {
 
 // Price value is in cents
 function calculateCartPrice(cart, opts = {}) {
-  const total = _.reduce(cart, (memo, item) => {
-    const itemPrice = calculateItemPrice(item);
-    return {
-      value: memo.value + itemPrice.value,
-      currency: itemPrice.currency,
-    };
-  }, { value: 0, currency: null });
-
+  const total = calculateTotalForItems(cart);
   const totalPriceObj = _createPriceObject(total);
-  const discountedPriceObj = _calculateDiscountTotal(totalPriceObj, opts);
+
+  const mapCart = _.filter(cart, item => !item.type || item.type === 'mapPoster');
+  const mapsTotal = calculateTotalForItems(mapCart);
+  const mapsTotalPriceObj = _createPriceObject(mapsTotal);
+
+  const discountedPriceObj = _calculateDiscountTotal(totalPriceObj, mapsTotalPriceObj, opts);
   if (!opts.shipToCountry && !opts.taxPercentage) {
     return discountedPriceObj;
   }
@@ -63,6 +61,25 @@ function calculateUnitPrice(size) {
       return _createPriceObject({ value: 6900, currency: 'EUR' });
     default:
       throw new Error(`Invalid size: ${size}`);
+  }
+}
+
+function getItemLabel(item) {
+  switch (item.type) {
+    case 'shippingClass':
+      return `${_.upperFirst(_.toLower(item.value))} Shipping`;
+    case 'productionClass':
+      return `Priority production`;
+    case 'physicalGiftCard':
+      return 'Premium gift card';
+    case 'giftCardValue':
+      return `Gift card value`;
+    default:
+      if (item.labelsEnabled && item.labelHeader) {
+        return `Poster of ${item.labelHeader}, ${item.size}`;
+      }
+
+      return `Poster, ${item.size}`;
   }
 }
 
@@ -131,7 +148,19 @@ function getTaxValue(grossValue, taxPercentage) {
   return Math.round(taxValue);  // in cents
 }
 
-function _calculateDiscountTotal(total, opts = {}) {
+function calculateTotalForItems(cart) {
+  const total = _.reduce(cart, (memo, item) => {
+    const itemPrice = calculateItemPrice(item);
+    return {
+      value: memo.value + itemPrice.value,
+      currency: itemPrice.currency,
+    };
+  }, { value: 0, currency: 'EUR' });
+
+  return total;
+}
+
+function _calculateDiscountTotal(total, discountableTotal, opts = {}) {
   const { promotion } = opts;
   if (!promotion) {
     return total;
@@ -141,7 +170,11 @@ function _calculateDiscountTotal(total, opts = {}) {
     throw new Error(`Promotion (${promotion.promotionCode}) has expired`);
   }
 
-  const discount = promotionToDiscount(total, promotion);
+  const resolvedDiscountableTotal = _.startsWith(promotion.promotionCode, 'PLATINUM')
+    ? total
+    : discountableTotal;
+
+  const discount = promotionToDiscount(resolvedDiscountableTotal, promotion);
   const newTotal = _createPriceObject({
     value: total.value - discount.value,
     currency: total.currency,
@@ -203,7 +236,7 @@ function _toHumanValue(price) {
 }
 
 function getCurrencySymbol(currency) {
-  if (!_.has(SYMBOLS, currency.toUpperCase())) {
+  if (!currency || !_.has(SYMBOLS, currency.toUpperCase())) {
     throw new Error(`Unknown currency: ${currency}`);
   }
 
@@ -215,4 +248,5 @@ module.exports = {
   calculateItemPrice,
   calculateUnitPrice,
   getCurrencySymbol,
+  getItemLabel,
 };
