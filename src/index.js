@@ -67,7 +67,7 @@ function calculateUnitPrice(size) {
 function getItemLabel(item) {
   switch (item.type) {
     case 'shippingClass':
-      return `${_.upperFirst(_.toLower(item.value))} Shipping`;
+      return `${_.upperFirst(_.toLower(item.value))} shipping`;
     case 'productionClass':
       return `Priority production`;
     case 'physicalGiftCard':
