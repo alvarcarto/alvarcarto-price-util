@@ -81,6 +81,23 @@ function calculateUnitPriceForSpecialItem(item) {
         throw new Error('Gift card value must be at least 1000. Got: ' + item.value);
       }
       return _createPriceObject({ value: item.value, currency: 'EUR' });
+    case 'productionClass':
+      if (item.quantity !== 1) {
+        throw new Error('Quantity for productionClass must be 1.');
+      }
+
+      if (item.value === 'HIGH') {
+        return _createPriceObject({ value: 1500, currency: 'EUR' });
+      }
+
+      return _createPriceObject({ value: 0, currency: 'EUR' });
+    case 'shippingClass':
+      if (item.quantity !== 1) {
+        throw new Error('Quantity for shippingClass must be 1.');
+      }
+
+      // Shipping is free at the moment
+      return _createPriceObject({ value: 0, currency: 'EUR' });
     case 'mapPoster':
       return calculateUnitPrice(item.size);
     default:
