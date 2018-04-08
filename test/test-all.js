@@ -76,6 +76,98 @@ describe('basic cases', () => {
     });
   });
 
+  it('30x40cm, 50x70cm, high class production, and express shipping in cart', () => {
+    const cart = [
+      {
+        quantity: 1,
+        size: '30x40cm',
+      },
+      {
+        quantity: 2,
+        size: '50x70cm',
+      },
+      {
+        quantity: 1,
+        value: 'HIGH',
+        type: 'productionClass'
+      },
+      {
+        quantity: 1,
+        value: 'EXPRESS',
+        type: 'shippingClass'
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepEqual(price, {
+      value: 15200,
+      humanValue: '152.00',
+      currency: 'EUR',
+      label: '152.00 €',
+    });
+  });
+
+  it('quantity above 1 for productionClass should not be accepted', () => {
+    const cart = [
+      {
+        quantity: 1,
+        size: '30x40cm',
+      },
+      {
+        quantity: 2,
+        size: '50x70cm',
+      },
+      {
+        quantity: 2,
+        value: 'HIGH',
+        type: 'productionClass'
+      },
+      {
+        quantity: 1,
+        value: 'EXPRESS',
+        type: 'shippingClass'
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Quantity for productionClass must be 1./
+    );
+  });
+
+  it('quantity above 1 for shippingClass should not be accepted', () => {
+    const cart = [
+      {
+        quantity: 2,
+        value: 'EXPRESS',
+        type: 'shippingClass'
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Quantity for shippingClass must be 1./
+    );
+  });
+
+  it('shipping should be free', () => {
+    const cart = [
+      {
+        quantity: 1,
+        value: 'EXPRESS',
+        type: 'shippingClass'
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepEqual(price, {
+      value: 0,
+      humanValue: '0.00',
+      currency: 'EUR',
+      label: '0.00 €',
+    });
+  });
+
   it('gift card in cart', () => {
     const cart = [
       {
