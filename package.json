@@ -1,6 +1,6 @@
 {
   "name": "alvarcarto-price-util",
-  "version": "3.5.0",
+  "version": "4.0.0",
   "description": "Calculates Alvar Carto prices",
   "main": "dist/index.js",
   "repository": {
