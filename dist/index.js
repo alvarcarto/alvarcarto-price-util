@@ -67,6 +67,12 @@ function calculateUnitPrice(size) {
       return _createPriceObject({ value: 4900, currency: 'EUR' });
     case '70x100cm':
       return _createPriceObject({ value: 6900, currency: 'EUR' });
+    case '12x18inch':
+      return _createPriceObject({ value: 4290, currency: 'EUR' });
+    case '18x24inch':
+      return _createPriceObject({ value: 4900, currency: 'EUR' });
+    case '24x36inch':
+      return _createPriceObject({ value: 6900, currency: 'EUR' });
     default:
       throw new Error('Invalid size: ' + size);
   }

@@ -76,6 +76,31 @@ describe('basic cases', () => {
     });
   });
 
+  it('12x18inch, 18x24inch and 24x36inch in cart', () => {
+    const cart = [
+      {
+        quantity: 1,
+        size: '12x18inch',
+      },
+      {
+        quantity: 2,
+        size: '18x24inch',
+      },
+      {
+        quantity: 1,
+        size: '24x36inch',
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepEqual(price, {
+      value: 20990,
+      humanValue: '209.90',
+      currency: 'EUR',
+      label: '209.90 €',
+    });
+  });
+
   it('30x40cm, 50x70cm, high class production, and express shipping in cart', () => {
     const cart = [
       {
