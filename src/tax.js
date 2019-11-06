@@ -1,14 +1,10 @@
 const Big = require('big.js');
 const { isEuCountry } = require('./country');
 
-const FINLAND_VAT_PERCENTAGE = new Big(24.0);
-
-function getTaxPercentage(opts) {
-  if (opts.taxPercentage) {
-    return opts.taxPercentage;
-  }
-
-  const taxPercentage = isEuCountry(opts.shipToCountry) ? FINLAND_VAT_PERCENTAGE : 0;
+function getTaxPercentage(product, opts) {
+  const taxPercentage = isEuCountry(opts.shipToCountry)
+    ? product.vatPercentage
+    : new Big(0);
   return taxPercentage;
 }
 

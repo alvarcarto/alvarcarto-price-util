@@ -270,6 +270,16 @@ const products = [
     vatPercentage: new Big(0),
     dynamicPrice: true,
   },
+
+  {
+    id: 'test-product-vat-28',
+    name: 'Test product VAT 28',
+    vatPercentage: new Big(28),
+    discountClass: 0,
+    grossPrices: {
+      EUR: new Big(3900),
+    },
+  },
 ];
 
 const richenedProducts = _.map(products, (product) => {

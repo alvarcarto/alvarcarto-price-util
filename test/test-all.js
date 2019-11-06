@@ -249,7 +249,7 @@ describe('basic cases', () => {
       {
         id: 'gift-card-value',
         metadata: {
-          value: 4900,
+          netValue: 4900,
         },
         quantity: 1,
       },
@@ -261,10 +261,30 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { currency: 'EUR' });
     assert.deepEqual(price, {
-      value: 5990,
-      humanValue: '59.90',
+      value: 5590,
+      humanValue: '55.90',
       currency: 'EUR',
-      label: '59.90 ',
+      zeroDecimalCurrency: false,
+      label: '55,90 €',
+      net: {
+        humanValue: 54.56,
+        label: '54,56 €',
+        value: 5456,
+      },
+      taxes: [
+        {
+          humanValue: '0.00',
+          label: '0,00 €',
+          taxPercentage: 0,
+          value: 0,
+        },
+        {
+          humanValue: '1.34',
+          label: '1,34 €',
+          taxPercentage: 24,
+          value: 134,
+        },
+      ],
     });
   });
 
@@ -846,7 +866,7 @@ describe('basic cases', () => {
     // This is a somewhat theoretical example. There are a lot of gross prices
     // where this same "bug" occurs but with Finland's current VAT %, this
     // never happens.
-    const price = priceUtil.calculateCartPrice(cart, { taxPercentage: 28 });
+    const price = priceUtil.calculateCartPrice(cart);
     assert.deepEqual(price, {
       value: 78000,
       humanValue: '780.00',
