@@ -5,10 +5,8 @@ describe('basic cases', () => {
   it('one 30x40cm in cart', () => {
     const cart = [
       {
-        type: 'mapPoster',
+        id: 'custom-map-print-30x40cm',
         quantity: 1,
-        size: '30x40cm',
-        // Other fields are not used
       },
     ];
 
@@ -17,53 +15,64 @@ describe('basic cases', () => {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
-      label: '39.00 €',
+      zeroDecimalCurrency: false,
+      label: '39,00 €',
       net: {
         value: 3145,
         humanValue: '31.45',
-        currency: 'EUR',
-        label: '31.45 €',
+        label: '31,45 €',
       },
-      tax: {
+      taxes: [{
         taxPercentage: 24,
         value: 755,
         humanValue: '7.55',
-        currency: 'EUR',
-        label: '7.55 €',
-      },
+        label: '7,55 €',
+      }],
     });
   });
 
   it('unit price for 3x 30x40cm in cart', () => {
     const cart = [
       {
+        id: 'custom-map-print-30x40cm',
         quantity: 3,
-        size: '30x40cm',
       },
     ];
 
-    const price = priceUtil.calculateUnitPrice(cart[0].size);
+    const price = priceUtil.calculateItemPrice(cart[0], { onlyUnitPrice: true });
     assert.deepEqual(price, {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
-      label: '39.00 €',
+      zeroDecimalCurrency: false,
+      label: '39,00 €',
+      net: {
+        value: 3145,
+        humanValue: '31.45',
+        label: '31,45 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 755,
+        humanValue: '7.55',
+        label: '7,55 €',
+      }],
     });
   });
 
   it('30x40cm, 50x70cm and 70x100cm in cart', () => {
     const cart = [
       {
+        id: 'custom-map-print-30x40cm',
         quantity: 1,
-        size: '30x40cm',
       },
       {
+        id: 'custom-map-print-50x70cm',
         quantity: 2,
-        size: '50x70cm',
       },
       {
+        id: 'custom-map-print-70x100cm',
         quantity: 1,
-        size: '70x100cm',
       },
     ];
 
@@ -72,32 +81,56 @@ describe('basic cases', () => {
       value: 20600,
       humanValue: '206.00',
       currency: 'EUR',
-      label: '206.00 €',
+      zeroDecimalCurrency: false,
+      label: '206,00 €',
+      net: {
+        value: 16613,
+        humanValue: '166.13',
+        label: '166,13 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 3987,
+        humanValue: '39.87',
+        label: '39,87 €',
+      }],
     });
   });
 
   it('12x18inch, 18x24inch and 24x36inch in cart', () => {
     const cart = [
       {
+        id: 'custom-map-print-12x18inch',
         quantity: 1,
-        size: '12x18inch',
       },
       {
+        id: 'custom-map-print-18x24inch',
         quantity: 2,
-        size: '18x24inch',
       },
       {
+        id: 'custom-map-print-24x36inch',
         quantity: 1,
-        size: '24x36inch',
       },
     ];
 
     const price = priceUtil.calculateCartPrice(cart);
     assert.deepEqual(price, {
-      value: 20990,
-      humanValue: '209.90',
+      value: 20890,
+      humanValue: '208.90',
       currency: 'EUR',
-      label: '209.90 €',
+      label: '208,90 €',
+      zeroDecimalCurrency: false,
+      net: {
+        value: 16847,
+        humanValue: '168.47',
+        label: '168,47 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 4043,
+        humanValue: '40.43',
+        label: '40,43 €',
+      }],
     });
   });
 
@@ -105,21 +138,19 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
       {
         quantity: 2,
-        size: '50x70cm',
+        id: 'custom-map-print-50x70cm',
       },
       {
+        id: 'production-high-priority',
         quantity: 1,
-        value: 'HIGH',
-        type: 'productionClass'
       },
       {
+        id: 'shipping-express',
         quantity: 1,
-        value: 'EXPRESS',
-        type: 'shippingClass'
       },
     ];
 
@@ -128,59 +159,67 @@ describe('basic cases', () => {
       value: 15200,
       humanValue: '152.00',
       currency: 'EUR',
-      label: '152.00 €',
+      zeroDecimalCurrency: false,
+      label: '152,00 €',
+      net: {
+        value: 12258,
+        humanValue: '122.58',
+        label: '122,58 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 2942,
+        humanValue: '29.42',
+        label: '29,42 €',
+      }],
     });
   });
 
   it('quantity above 1 for productionClass should not be accepted', () => {
     const cart = [
       {
+        id: 'custom-map-print-30x40cm',
         quantity: 1,
-        size: '30x40cm',
       },
       {
+        id: 'custom-map-print-50x70cm',
         quantity: 2,
-        size: '50x70cm',
       },
       {
+        id: 'production-priority-high',
         quantity: 2,
-        value: 'HIGH',
-        type: 'productionClass'
       },
       {
+        id: 'shipping-express',
         quantity: 1,
-        value: 'EXPRESS',
-        type: 'shippingClass'
       },
     ];
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Quantity for productionClass must be 1./
+      /Quantity for production-priority-high must not be above 1./
     );
   });
 
   it('quantity above 1 for shippingClass should not be accepted', () => {
     const cart = [
       {
+        id: 'shipping-express',
         quantity: 2,
-        value: 'EXPRESS',
-        type: 'shippingClass'
       },
     ];
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Quantity for shippingClass must be 1./
+      /Quantity for shipping-express must not be above 1./
     );
   });
 
   it('shipping should be free', () => {
     const cart = [
       {
+        id: 'shipping-express',
         quantity: 1,
-        value: 'EXPRESS',
-        type: 'shippingClass'
       },
     ];
 
@@ -189,29 +228,43 @@ describe('basic cases', () => {
       value: 0,
       humanValue: '0.00',
       currency: 'EUR',
-      label: '0.00 €',
+      zeroDecimalCurrency: false,
+      label: '0,00 €',
+      net: {
+        value: 0,
+        humanValue: '0.00',
+        label: '0,00 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 0,
+        humanValue: '0.00',
+        label: '0,00 €',
+      }],
     });
   });
 
   it('gift card in cart', () => {
     const cart = [
       {
-        type: 'giftCardValue',
-        value: 4900,
+        id: 'gift-card-value',
+        metadata: {
+          value: 4900,
+        },
         quantity: 1,
       },
       {
-        type: 'physicalGiftCard',
+        id: 'physical-gift-card',
         quantity: 1,
       },
     ];
 
-    const price = priceUtil.calculateCartPrice(cart);
+    const price = priceUtil.calculateCartPrice(cart, { currency: 'EUR' });
     assert.deepEqual(price, {
-      value: 5590,
-      humanValue: '55.90',
+      value: 5990,
+      humanValue: '59.90',
       currency: 'EUR',
-      label: '55.90 €',
+      label: '59.90 ',
     });
   });
 
