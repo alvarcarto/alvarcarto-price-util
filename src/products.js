@@ -178,7 +178,7 @@ const products = [
     id: 'physical-gift-card',
     name: 'Premium gift card',
     rules: [
-      { type: 'MAX_QUANTITY', value: 1 },
+      { type: 'MAX_QUANTITY', payload: 1 },
     ],
     vatPercentage: new Big(24),
     discountClass: 0,
@@ -210,7 +210,7 @@ const products = [
     id: 'shipping-express',
     name: 'Express shipping',
     rules: [
-      { type: 'MAX_QUANTITY', value: 1 },
+      { type: 'MAX_QUANTITY', payload: 1 },
     ],
     vatPercentage: new Big(24),
     discountClass: 1,
@@ -231,7 +231,7 @@ const products = [
     id: 'production-high-priority',
     name: 'Priority production',
     rules: [
-      { type: 'MAX_QUANTITY', value: 1 },
+      { type: 'MAX_QUANTITY', payload: 1 },
     ],
     vatPercentage: new Big(24),
     discountClass: 1,
@@ -264,8 +264,8 @@ const products = [
     name: 'Gift card value',
     discountClass: 1,
     rules: [
-      { type: 'MAX_QUANTITY', value: 1 },
-      { type: 'MIN_PRICE', value: { currency: 'EUR', value: 1000 } },
+      { type: 'MAX_QUANTITY', payload: 1 },
+      { type: 'MIN_NET_PRICE', payload: 1000 },
     ],
     vatPercentage: new Big(0),
     dynamicPrice: true,

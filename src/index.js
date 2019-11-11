@@ -6,6 +6,7 @@ const { bigMin } = require('./big-utils');
 const { calculateGrossValue, calculateTaxValue, getTaxPercentage } = require('./tax');
 const { valueToRegularUnits, isZeroDecimalCurrency } = require('./stripe');
 const { products } = require('./products');
+const RULE_FUNCTIONS = require('./rules');
 
 function taxesObjToArr(taxByP) {
   const arr = _.map(taxByP, (value, p) => {
@@ -15,12 +16,50 @@ function taxesObjToArr(taxByP) {
   return _.sortBy(arr, 'taxPercentage');
 }
 
+function validateDynamicPrice(item) {
+  if (!_.isPlainObject(item.metadata)) {
+    throw new Error(`No metadata object found for dynamic priced item ${item.id}`);
+  }
+
+  if (!_.isFinite(item.metadata.netValue)) {
+    throw new Error(`No metadata.netValue found for dynamic priced item ${item.id}`);
+  }
+}
+
+function executeRulesForCart(cart) {
+  const cartErrs = _.map(cart, (item) => {
+    if (!item.product.rules) {
+      return [];
+    }
+
+    return executeRulesForItem(item.product.rules, item);
+  });
+
+  _.forEach(cartErrs, (itemErrs, itemIndex) => {
+    _.forEach(itemErrs, (err) => {
+      if (err) {
+        console.error(`Error in cart item with index ${itemIndex}`);
+        throw err;
+      }
+    });
+  });
+}
+
+function executeRulesForItem(rules, item) {
+  const itemErrs = _.map(rules, (rule) => {
+    const ruleFunc = RULE_FUNCTIONS[rule.type];
+    return ruleFunc(rule, item);
+  });
+  return itemErrs;
+}
+
 function calculateItemBreakdown(item, currency, taxPercentage) {
   let itemOriginalNetPrice;
   if (item.product.dynamicPrice) {
+    validateDynamicPrice(item);
     itemOriginalNetPrice = new Big(item.metadata.netValue).times(item.quantity);
   } else if (!_.has(item.product.netPrices, currency)) {
-    throw new Error(`Item ${item.id} does not have price in ${currency} currency.`);
+    throw new Error(`Item ${item.id} does not have price in ${currency} currency`);
   } else {
     itemOriginalNetPrice = item.product.netPrices[currency].times(item.quantity);
   }
@@ -173,6 +212,9 @@ function calculateCartPrice(cart, _opts = {}) {
   console.log(JSON.stringify(discountedCart, null ,2));
   const cartTotals = calculateCartTotals(discountedCart, opts);
   console.log(JSON.stringify(cartTotals, null ,2));
+
+  executeRulesForCart(discountedCart);
+
   const grossPriceObj = createPriceObject({
     value: cartTotals.grossTotal,
     currency: opts.currency,

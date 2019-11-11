@@ -186,7 +186,7 @@ describe('basic cases', () => {
         quantity: 2,
       },
       {
-        id: 'production-priority-high',
+        id: 'production-high-priority',
         quantity: 2,
       },
       {
@@ -197,7 +197,7 @@ describe('basic cases', () => {
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Quantity for production-priority-high must not be above 1./
+      /Quantity for production-high-priority must not be above 1./
     );
   });
 
@@ -291,93 +291,161 @@ describe('basic cases', () => {
   it('negative gift card value should not be accepted', () => {
     const cart = [
       {
-        type: 'giftCardValue',
-        value: -4900,
-        quantity: 1,
-      }
-    ];
-
-    assert.throws(
-      () => priceUtil.calculateCartPrice(cart),
-      /Gift card value must be at least 1000./
-    );
-  });
-
-  it('zero gift card value should not be accepted', () => {
-    const cart = [
-      {
-        type: 'giftCardValue',
-        value: 0,
-        quantity: 1,
-      }
-    ];
-
-    assert.throws(
-      () => priceUtil.calculateCartPrice(cart),
-      /Gift card value must be at least 1000./
-    );
-  });
-
-  it('too low gift card value should not be accepted', () => {
-    const cart = [
-      {
-        type: 'giftCardValue',
-        value: 999,
+        id: 'gift-card-value',
+        metadata: {
+          netValue: -4900,
+        },
         quantity: 1,
       },
     ];
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Gift card value must be at least 1000./
+      /Item gift-card-value net price must be at least 1000/
     );
   });
 
-  it('Unknown cart item types should not be accepted', () => {
+  it('gift card value missing metadata should throw', () => {
     const cart = [
       {
-        type: 'noSuchProduct',
-        size: '30x40cm',
+        id: 'gift-card-value',
+        quantity: 1,
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /No metadata object found for dynamic priced item gift-card-value/
+    );
+  });
+
+  it('gift card value missing metadata.netValue should throw', () => {
+    const cart = [
+      {
+        id: 'gift-card-value',
+        metadata: {
+          netValuuuu: 1200
+        },
+        quantity: 1,
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /No metadata.netValue found for dynamic priced item gift-card-value/
+    );
+  });
+
+  it('zero gift card value should not be accepted', () => {
+    const cart = [
+      {
+        id: 'gift-card-value',
+        metadata: {
+          netValue: 0,
+        },
         quantity: 1,
       }
     ];
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Invalid item type/
+      /Item gift-card-value net price must be at least 1000/
+    );
+  });
+
+  it('too low gift card value should not be accepted', () => {
+    const cart = [
+      {
+        id: 'gift-card-value',
+        metadata: {
+          netValue: 999
+        },
+        quantity: 1,
+      },
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /Item gift-card-value net price must be at least 1000/
+    );
+  });
+
+  it('Unknown cart item types should not be accepted', () => {
+    const cart = [
+      {
+        id: 'no-such-product',
+        quantity: 1,
+      }
+    ];
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart),
+      /No such product with id: no-such-product/
     );
   });
 
   it('item price calculation for gift card value should work', () => {
     const price = priceUtil.calculateItemPrice({
-      type: 'giftCardValue',
+      id: 'gift-card-value',
       quantity: 1,
-      value: 4900,
+      metadata: {
+        netValue: 4900,
+      },
     });
+
     assert.deepEqual(price, {
       value: 4900,
-      humanValue: '49.00',
       currency: 'EUR',
-      label: '49.00 €',
+      zeroDecimalCurrency: false,
+      label: '49,00 €',
+      humanValue: '49.00',
+      net: {
+        value: 4900,
+        label: '49,00 €',
+        humanValue: '49.00',
+      },
+      taxes: [
+        {
+          value: 0,
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 0,
+        },
+      ],
     });
   });
 
   it('item price calculation for physical gift card should work', () => {
     const price = priceUtil.calculateItemPrice({
-      type: 'physicalGiftCard',
+      id: 'physical-gift-card',
       quantity: 1,
     });
+    console.log(JSON.stringify(price, null, 2))
     assert.deepEqual(price, {
       value: 690,
-      humanValue: '6.90',
       currency: 'EUR',
-      label: '6.90 €',
+      zeroDecimalCurrency: false,
+      label: '6,90 €',
+      humanValue: '6.90',
+      net: {
+        value: 556,
+        label: '5,56 €',
+        humanValue: '5.56',
+      },
+      taxes: [
+        {
+          value: 134,
+          label: '1,34 €',
+          humanValue: '1.34',
+          taxPercentage: 24,
+        },
+      ],
     });
   });
 
   it('quantity is required for gift card', () => {
     assert.throws(
-      () => priceUtil.calculateItemPrice({ type: 'giftCardValue', value: 4900 }),
+      () => priceUtil.calculateItemPrice({ id: 'gift-card-value', value: 4900 }),
       /Item quantity should be an integer/
     );
   });
@@ -387,36 +455,20 @@ describe('basic cases', () => {
   it('multiple gift cards in cart', () => {
     const cart = [
       {
-        type: 'giftCardValue',
-        value: 4101,  // This can be any value
-        quantity: 2,
+        id: 'gift-card-value',
+        metadata: {
+          netValue: 1000,
+        },
+        quantity: 1,
       },
       {
-        type: 'physicalGiftCard',
+        id: 'physical-gift-card',
         quantity: 3,
       },
     ];
-
-    const price = priceUtil.calculateCartPrice(cart);
-    assert.deepEqual(price, {
-      value: 10272,
-      humanValue: '102.72',
-      currency: 'EUR',
-      label: '102.72 €',
-    });
-  });
-
-  it('invalid poster size should throw an error', () => {
-    const cart = [
-      {
-        quantity: 1,
-        size: '30x30cm',
-      },
-    ];
-
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /Invalid size:/
+      /Item physical-gift-card max allowed quantity is 1 but found 3/
     );
   });
 
@@ -424,7 +476,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 'a',
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -438,15 +490,15 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
       {
         quantity: 2,
-        size: '50x70cm',
+        id: 'custom-map-print-50x70cm',
       },
       {
         quantity: 1,
-        size: '70x100cm',
+        id: 'custom-map-print-70x100cm',
       },
     ];
 
@@ -478,7 +530,7 @@ describe('basic cases', () => {
       {
         // Price: 8 * 39€ = 312€
         quantity: 8,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -511,7 +563,7 @@ describe('basic cases', () => {
       {
         // Price: 3 * 39€ = 117€
         quantity: 3,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -556,7 +608,7 @@ describe('basic cases', () => {
       {
         // Price: 39€
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -600,7 +652,7 @@ describe('basic cases', () => {
       {
         // Price: 39€
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -630,18 +682,16 @@ describe('basic cases', () => {
   it('promotion should not affect shipping or production class prices', () => {
     const cart = [
       {
-        type: 'productionClass',
-        value: 'HIGH',
+        id: 'production-high-priority',
         quantity: 1,
       },
       {
-        type: 'shippingClass',
-        value: 'EXPRESS',
+        id: 'shipping-express',
         quantity: 1,
       },
       {
         quantity: 1,
-        size: '70x100cm',
+        id: 'custom-map-print-70x100cm',
       },
     ];
 
@@ -671,26 +721,24 @@ describe('basic cases', () => {
   it('PLATINUM promotion allows discount for any product', () => {
     const cart = [
       {
-        type: 'productionClass',
-        value: 'HIGH',
+        id: 'production-high-priority',
         quantity: 1,
       },
       {
-        type: 'shippingClass',
-        value: 'EXPRESS',
+        id: 'shipping-express',
         quantity: 1,
       },
       {
         quantity: 1,
-        size: '70x100cm',
+        id: 'custom-map-print-70x100cm',
       },
       {
-        type: 'giftCardValue',
+        id: 'gift-card-value',
         value: 6900,
         quantity: 1,
       },
       {
-        type: 'physicalGiftCard',
+        id: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -721,12 +769,12 @@ describe('basic cases', () => {
   it('promotion should not affect shipping or production class prices', () => {
     const cart = [
       {
-        type: 'giftCardValue',
+        id: 'gift-card-value',
         value: 6900,
         quantity: 1,
       },
       {
-        type: 'physicalGiftCard',
+        id: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -758,7 +806,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -780,7 +828,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -802,7 +850,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -824,7 +872,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -858,7 +906,7 @@ describe('basic cases', () => {
     const cart = [
       {
         quantity: 20,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
         // Other fields are not used
       },
     ];
@@ -897,7 +945,7 @@ describe('basic cases', () => {
       {
         type: 'unexisting',
         quantity: 1,
-        size: '30x40cm',
+        id: 'custom-map-print-30x40cm',
       },
     ];
 
