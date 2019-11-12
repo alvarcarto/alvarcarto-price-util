@@ -1173,6 +1173,35 @@ describe('currencies', () => {
     });
   });
 
+  it('purchase with JPY', () => {
+    const cart = [
+      {
+        id: 'custom-map-print-30x40cm',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'JP', currency: 'JPY' });
+    assert.deepStrictEqual(price, {
+      value: 4699,
+      humanValue: '4699',
+      currency: 'JPY',
+      zeroDecimalCurrency: true,
+      label: '¥4,699',
+      net: {
+        value: 4699,
+        humanValue: '4699',
+        label: '¥4,699',
+      },
+      taxes: [{
+        taxPercentage: 0,
+        value: 0,
+        humanValue: '0',
+        label: '¥0',
+      }],
+    });
+  });
+
   it('inconsistent currency between promotion and opts.currency', () => {
     const cart = [
       {

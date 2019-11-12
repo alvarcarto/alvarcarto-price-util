@@ -13,10 +13,10 @@ function isZeroDecimalCurrency(currency) {
 
 function valueToRegularUnits(stripeVal, currency) {
   if (isZeroDecimalCurrency(currency)) {
-    return stripeVal;
+    return stripeVal.toFixed(0);
   }
 
-  return stripeVal.div(100);
+  return stripeVal.div(100).toFixed(2);
 }
 
 module.exports = {

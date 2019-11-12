@@ -100,7 +100,7 @@ function createPriceObject(basePriceObj, currency) {
   const fullPriceObj = _.merge({}, basePriceObj, {
     value: Number(basePriceObj.value.toFixed(0)),
     label: formatPrice(basePriceObj.value, currency),
-    humanValue: valueToRegularUnits(basePriceObj.value, currency).toFixed(2),
+    humanValue: valueToRegularUnits(basePriceObj.value, currency),
   });
 
   return fullPriceObj;
@@ -108,7 +108,7 @@ function createPriceObject(basePriceObj, currency) {
 
 function formatPrice(value, currency) {
   const regularValue = valueToRegularUnits(value, currency);
-  return currencyFormatter.format(regularValue.toFixed(2), { code: currency });
+  return currencyFormatter.format(regularValue, { code: currency });
 }
 
 function calculateCartPrice(cart, _opts = {}) {
