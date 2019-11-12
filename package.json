@@ -11,7 +11,8 @@
   "license": "MIT",
   "homepage": "https://github.com/kimmobrunfeldt/alvarcarto-price-util#readme",
   "dependencies": {
-    "lodash": "^4.16.2"
+    "big.js": "^5.2.2",
+    "currency-formatter": "^1.5.5"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
@@ -19,8 +20,11 @@
     "eslint": "^3.5.0",
     "eslint-config-airbnb-base": "^7.1.0",
     "eslint-plugin-import": "^1.15.0",
+    "lodash": "^4.17.15",
     "mocha": "^3.0.2",
-    "np": "^2.12.0"
+    "np": "^2.12.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5"
   },
   "scripts": {
     "test": "mocha",
