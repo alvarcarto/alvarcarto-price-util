@@ -325,7 +325,7 @@ describe('basic cases', () => {
       {
         id: 'gift-card-value',
         metadata: {
-          netValuuuu: 1200
+          netValuuuu: 1200,
         },
         quantity: 1,
       },
@@ -345,7 +345,7 @@ describe('basic cases', () => {
           netValue: 0,
         },
         quantity: 1,
-      }
+      },
     ];
 
     assert.throws(
@@ -359,7 +359,7 @@ describe('basic cases', () => {
       {
         id: 'gift-card-value',
         metadata: {
-          netValue: 999
+          netValue: 999,
         },
         quantity: 1,
       },
@@ -376,7 +376,7 @@ describe('basic cases', () => {
       {
         id: 'no-such-product',
         quantity: 1,
-      }
+      },
     ];
 
     assert.throws(
@@ -522,20 +522,20 @@ describe('basic cases', () => {
       net: {
         value: 15790,
         label: '157,90 €',
-        humanValue: '157.90'
+        humanValue: '157.90',
       },
       taxes: [
         {
           value: 3790,
           label: '37,90 €',
           humanValue: '37.90',
-          taxPercentage: 24
+          taxPercentage: 24,
         },
       ],
       discount: {
         value: 1020,
         label: '10,20 €',
-        humanValue: '10.20'
+        humanValue: '10.20',
       },
     });
   });
@@ -582,32 +582,32 @@ describe('basic cases', () => {
       net: {
         value: 1697,
         label: '16,97 €',
-        humanValue: '16.97'
+        humanValue: '16.97',
       },
       taxes: [
         {
           value: 0,
           label: '0,00 €',
           humanValue: '0.00',
-          taxPercentage: 0
+          taxPercentage: 0,
         },
         {
           value: 89,
           label: '0,89 €',
           humanValue: '0.89',
-          taxPercentage: 10
+          taxPercentage: 10,
         },
         {
           value: 194,
           label: '1,94 €',
           humanValue: '1.94',
-          taxPercentage: 24
+          taxPercentage: 24,
         },
       ],
       discount: {
         value: 4920,
         label: '49,20 €',
-        humanValue: '49.20'
+        humanValue: '49.20',
       },
     });
   });
@@ -664,28 +664,28 @@ describe('basic cases', () => {
     const price = priceUtil.calculateCartPrice(cart, { promotion });
     assert.deepEqual(price, {
       value: 20810,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "208,10 €",
-      humanValue: "208.10",
+      label: '208,10 €',
+      humanValue: '208.10',
       net: {
         value: 16782,
-        label: "167,82 €",
-        humanValue: "167.82"
+        label: '167,82 €',
+        humanValue: '167.82',
       },
       taxes: [
         {
           value: 4028,
-          label: "40,28 €",
-          humanValue: "40.28",
-          taxPercentage: 24
-        }
+          label: '40,28 €',
+          humanValue: '40.28',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 10390,
-        label: "103,90 €",
-        humanValue: "103.90"
-      }
+        label: '103,90 €',
+        humanValue: '103.90',
+      },
     });
   });
 
@@ -709,29 +709,29 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 26940,
-      currency: "USD",
+      currency: 'USD',
       zeroDecimalCurrency: false,
-      label: "$269.40",
-      humanValue: "269.40",
+      label: '$269.40',
+      humanValue: '269.40',
       net: {
         value: 21726,
-        label: "$217.26",
-        humanValue: "217.26"
+        label: '$217.26',
+        humanValue: '217.26',
       },
       taxes: [
         {
           value: 5214,
-          label: "$52.14",
-          humanValue: "52.14",
-          taxPercentage: 24
-        }
+          label: '$52.14',
+          humanValue: '52.14',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         // Negative discount means you pay more
         value: -13470,
-        label: "-$134.70",
-        humanValue: "-134.70"
-      }
+        label: '-$134.70',
+        humanValue: '-134.70',
+      },
     });
   });
 
@@ -755,28 +755,28 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 0,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "0,00 €",
-      humanValue: "0.00",
+      label: '0,00 €',
+      humanValue: '0.00',
       net: {
         value: 0,
-        label: "0,00 €",
-        humanValue: "0.00"
+        label: '0,00 €',
+        humanValue: '0.00',
       },
       taxes: [
         {
           value: 0,
-          label: "0,00 €",
-          humanValue: "0.00",
-          taxPercentage: 24
-        }
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 7800,
-        label: "78,00 €",
-        humanValue: "78.00"
-      }
+        label: '78,00 €',
+        humanValue: '78.00',
+      },
     });
   });
 
@@ -801,28 +801,28 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 0,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "0,00 €",
-      humanValue: "0.00",
+      label: '0,00 €',
+      humanValue: '0.00',
       net: {
         value: 0,
-        label: "0,00 €",
-        humanValue: "0.00"
+        label: '0,00 €',
+        humanValue: '0.00',
       },
       taxes: [
         {
           value: 0,
-          label: "0,00 €",
-          humanValue: "0.00",
-          taxPercentage: 24
-        }
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 7800,
-        label: "78,00 €",
-        humanValue: "78.00"
-      }
+        label: '78,00 €',
+        humanValue: '78.00',
+      },
     });
   });
 
@@ -854,28 +854,28 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 1500,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "15,00 €",
-      humanValue: "15.00",
+      label: '15,00 €',
+      humanValue: '15.00',
       net: {
         value: 1210,
-        label: "12,10 €",
-        humanValue: "12.10"
+        label: '12,10 €',
+        humanValue: '12.10',
       },
       taxes: [
         {
           value: 290,
-          label: "2,90 €",
-          humanValue: "2.90",
-          taxPercentage: 24
-        }
+          label: '2,90 €',
+          humanValue: '2.90',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 6900,
-        label: "69,00 €",
-        humanValue: "69.00"
-      }
+        label: '69,00 €',
+        humanValue: '69.00',
+      },
     });
   });
 
@@ -918,34 +918,34 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 0,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "0,00 €",
-      humanValue: "0.00",
+      label: '0,00 €',
+      humanValue: '0.00',
       net: {
         value: 0,
-        label: "0,00 €",
-        humanValue: "0.00"
+        label: '0,00 €',
+        humanValue: '0.00',
       },
       taxes: [
         {
           value: 0,
-          label: "0,00 €",
-          humanValue: "0.00",
-          taxPercentage: 0
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 0,
         },
         {
           value: 0,
-          label: "0,00 €",
-          humanValue: "0.00",
-          taxPercentage: 24
-        }
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 15990,
-        label: "159,90 €",
-        humanValue: "159.90"
-      }
+        label: '159,90 €',
+        humanValue: '159.90',
+      },
     });
   });
 
@@ -975,29 +975,29 @@ describe('basic cases', () => {
     const price = priceUtil.calculateCartPrice(cart, { promotion });
     assert.deepEqual(price, {
       value: 7590,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "75,90 €",
-      humanValue: "75.90",
+      label: '75,90 €',
+      humanValue: '75.90',
       net: {
         value: 7456,
-        label: "74,56 €",
-        humanValue: "74.56"
+        label: '74,56 €',
+        humanValue: '74.56',
       },
       taxes: [
         {
           value: 0,
-          label: "0,00 €",
-          humanValue: "0.00",
-          taxPercentage: 0
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 0,
         },
         {
           value: 134,
-          label: "1,34 €",
-          humanValue: "1.34",
-          taxPercentage: 24
-        }
-      ]
+          label: '1,34 €',
+          humanValue: '1.34',
+          taxPercentage: 24,
+        },
+      ],
     });
   });
 
@@ -1067,28 +1067,28 @@ describe('basic cases', () => {
     });
     assert.deepEqual(price, {
       value: 3400,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "34,00 €",
-      humanValue: "34.00",
+      label: '34,00 €',
+      humanValue: '34.00',
       net: {
         value: 2742,
-        label: "27,42 €",
-        humanValue: "27.42"
+        label: '27,42 €',
+        humanValue: '27.42',
       },
       taxes: [
         {
           value: 658,
-          label: "6,58 €",
-          humanValue: "6.58",
-          taxPercentage: 24
-        }
+          label: '6,58 €',
+          humanValue: '6.58',
+          taxPercentage: 24,
+        },
       ],
       discount: {
         value: 500,
-        label: "5,00 €",
-        humanValue: "5.00"
-      }
+        label: '5,00 €',
+        humanValue: '5.00',
+      },
     });
   });
 
@@ -1111,27 +1111,27 @@ describe('basic cases', () => {
 
     assert.deepEqual(price, {
       value: 78000,
-      currency: "EUR",
+      currency: 'EUR',
       zeroDecimalCurrency: false,
-      label: "780,00 €",
-      humanValue: "780.00",
+      label: '780,00 €',
+      humanValue: '780.00',
       // The exact sum is 60937.5 cents
       // but net value is rounded down, to make net + tax equal gross price
       net: {
         value: 60937,
-        label: "609,37 €",
-        humanValue: "609.37"
+        label: '609,37 €',
+        humanValue: '609.37',
       },
       taxes: [
         // The exact sum is 17062.5 cents
         // but the tax value is rounded normally (up)
         {
           value: 17063,
-          label: "170,63 €",
-          humanValue: "170.63",
-          taxPercentage: 28
-        }
-      ]
+          label: '170,63 €',
+          humanValue: '170.63',
+          taxPercentage: 28,
+        },
+      ],
     });
   });
 });

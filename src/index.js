@@ -14,9 +14,7 @@ const { valueToRegularUnits, isZeroDecimalCurrency } = require('./stripe');
 const { products } = require('./products');
 
 function taxesObjToArr(taxByP) {
-  const arr = _.map(taxByP, (value, p) => {
-    return { taxPercentage: Number(p), value };
-  });
+  const arr = _.map(taxByP, (value, p) => ({ taxPercentage: Number(p), value }));
 
   return _.sortBy(arr, 'taxPercentage');
 }
@@ -129,7 +127,7 @@ function calculateCartPrice(cart, _opts = {}) {
     return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage });
   });
   const roundedGrossTotal = cartTotals.grossTotal.round(0);
-  const roundedTaxTotal = _.reduce(taxesArr, (memo, tax) => memo.plus(tax.value), new Big('0'))
+  const roundedTaxTotal = _.reduce(taxesArr, (memo, tax) => memo.plus(tax.value), new Big('0'));
   // Rounded net price is calculated with this method to make sure net + tax = gross.
   // See VAT 28 test case
   const roundedNetTotal = roundedGrossTotal.minus(roundedTaxTotal);
