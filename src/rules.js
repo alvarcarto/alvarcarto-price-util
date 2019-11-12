@@ -1,3 +1,7 @@
+/* eslint-disable consistent-return */
+// All these functions should return undefined when no error is found
+// writing `return undefined` to all functions is more noise
+
 const rules = {
   MIN_NET_PRICE: (rule, item) => {
     const netValue = item.product.dynamicPrice

@@ -1,7 +1,7 @@
 function bigMax(...args) {
   let maxFound = args[0];
 
-  for (let i = 1; i < args.length; ++i) {
+  for (let i = 1; i < args.length; i += 1) {
     const y = args[i];
     if (maxFound.lt(y)) {
       maxFound = y;
@@ -14,7 +14,7 @@ function bigMax(...args) {
 function bigMin(...args) {
   let minFound = args[0];
 
-  for (let i = 1; i < args.length; ++i) {
+  for (let i = 1; i < args.length; i += 1) {
     const y = args[i];
     if (minFound.gt(y)) {
       minFound = y;
