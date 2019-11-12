@@ -1,266 +1,190 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var _ = require('lodash');
+var Big = require('big.js');
+var currencyFormatter = require('currency-formatter');
 
 var _require = require('./country'),
     isEuCountry = _require.isEuCountry;
 
-var FINLAND_VAT_PERCENTAGE = 24.0;
+var _require2 = require('./tax'),
+    calculateGrossValue = _require2.calculateGrossValue,
+    calculateTaxValue = _require2.calculateTaxValue,
+    calculateNetValue = _require2.calculateNetValue,
+    getTaxPercentage = _require2.getTaxPercentage;
 
-// TODO: Use currency lib
-var SYMBOLS = {
-  EUR: '\u20AC'
-};
+var _require3 = require('./discount'),
+    addDiscountsForItems = _require3.addDiscountsForItems;
 
-// Price value is in cents
-function calculateCartPrice(cart) {
-  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+var _require4 = require('./validation'),
+    validateCart = _require4.validateCart;
 
-  var total = calculateTotalForItems(cart);
-  var totalPriceObj = _createPriceObject(total);
+var _require5 = require('./stripe'),
+    valueToRegularUnits = _require5.valueToRegularUnits,
+    isZeroDecimalCurrency = _require5.isZeroDecimalCurrency;
 
-  var mapCart = _.filter(cart, function (item) {
-    return !item.type || item.type === 'mapPoster';
-  });
-  var mapsTotal = calculateTotalForItems(mapCart);
-  var mapsTotalPriceObj = _createPriceObject(mapsTotal);
+var _require6 = require('./products'),
+    products = _require6.products;
 
-  var discountedPriceObj = _calculateDiscountTotal(totalPriceObj, mapsTotalPriceObj, opts);
-  if (!opts.shipToCountry && !opts.taxPercentage) {
-    return discountedPriceObj;
-  }
-
-  var taxPercentage = void 0;
-  if (opts.taxPercentage) {
-    taxPercentage = opts.taxPercentage;
-  } else {
-    taxPercentage = isEuCountry(opts.shipToCountry) ? FINLAND_VAT_PERCENTAGE : 0;
-  }
-
-  return _addTax(discountedPriceObj, taxPercentage);
-}
-
-function calculateItemPrice(item) {
-  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  var price = _.isString(item.type) ? calculateUnitPriceForSpecialItem(item) : calculateUnitPrice(item.size);
-
-  if (!opts.onlyUnitPrice) {
-    if (!_.isInteger(item.quantity)) {
-      throw new Error('Item quantity should be an integer. Item: ' + item);
-    }
-    if (item.quantity < 1) {
-      throw new Error('Item quantity should at least 1. Item: ' + item);
-    }
-
-    price.value *= item.quantity;
-  }
-
-  return price;
-}
-
-function calculateUnitPrice(size) {
-  switch (size) {
-    case '30x40cm':
-      return _createPriceObject({ value: 3900, currency: 'EUR' });
-    case '50x70cm':
-      return _createPriceObject({ value: 4900, currency: 'EUR' });
-    case '70x100cm':
-      return _createPriceObject({ value: 6900, currency: 'EUR' });
-    case '12x18inch':
-      return _createPriceObject({ value: 4290, currency: 'EUR' });
-    case '18x24inch':
-      return _createPriceObject({ value: 4900, currency: 'EUR' });
-    case '24x36inch':
-      return _createPriceObject({ value: 6900, currency: 'EUR' });
-    default:
-      throw new Error('Invalid size: ' + size);
-  }
-}
-
-function getItemLabel(item) {
-  switch (item.type) {
-    case 'shippingClass':
-      return _.upperFirst(_.toLower(item.value)) + ' shipping';
-    case 'productionClass':
-      return 'Priority production';
-    case 'physicalGiftCard':
-      return 'Premium gift card';
-    case 'giftCardValue':
-      return 'Gift card value';
-    default:
-      if (item.labelsEnabled && item.labelHeader) {
-        return 'Poster of ' + item.labelHeader + ', ' + item.size;
-      }
-
-      return 'Poster, ' + item.size;
-  }
-}
-
-function calculateUnitPriceForSpecialItem(item) {
-  switch (item.type) {
-    case 'physicalGiftCard':
-      return _createPriceObject({ value: 690, currency: 'EUR' });
-    case 'giftCardValue':
-      if (item.value < 1000) {
-        throw new Error('Gift card value must be at least 1000. Got: ' + item.value);
-      }
-      return _createPriceObject({ value: item.value, currency: 'EUR' });
-    case 'productionClass':
-      if (item.quantity !== 1) {
-        throw new Error('Quantity for productionClass must be 1.');
-      }
-
-      if (item.value === 'HIGH') {
-        return _createPriceObject({ value: 1500, currency: 'EUR' });
-      }
-
-      return _createPriceObject({ value: 0, currency: 'EUR' });
-    case 'shippingClass':
-      if (item.quantity !== 1) {
-        throw new Error('Quantity for shippingClass must be 1.');
-      }
-
-      // Shipping is free at the moment
-      return _createPriceObject({ value: 0, currency: 'EUR' });
-    case 'mapPoster':
-      return calculateUnitPrice(item.size);
-    default:
-      throw new Error('Invalid item type: ' + item.type);
-  }
-}
-
-function _addTax(totalPrice, taxPercentage) {
-  var grossValue = totalPrice.value;
-  var taxObj = _.merge({}, _createPriceObject({
-    value: getTaxValue(grossValue, taxPercentage),
-    currency: totalPrice.currency
-  }), {
-    taxPercentage: taxPercentage
+function taxesObjToArr(taxByP) {
+  var arr = _.map(taxByP, function (value, p) {
+    return { taxPercentage: new Big(p), value: value };
   });
 
-  var netObj = _createPriceObject({
-    value: getNetValue(grossValue, taxPercentage),
-    currency: totalPrice.currency
-  });
-
-  return _.merge({}, totalPrice, {
-    net: netObj,
-    tax: taxObj
-  });
+  return _.sortBy(arr, 'taxPercentage');
 }
 
-function getNetValue(grossValue, taxPercentage) {
-  var taxValue = getTaxValue(grossValue, taxPercentage);
-  return Math.round(grossValue - taxValue); // in cents
+function calculateItemBreakdown(item, currency, taxPercentage) {
+  if (!_.get(item, ['product', 'grossPrices', currency])) {
+    throw new Error('Item ' + item.id + ' does not have price in ' + currency + ' currency');
+  }
+
+  var itemOriginalGrossPrice = item.product.grossPrices[currency].times(item.quantity);
+  var itemGrossDiscount = _.get(item.grossDiscounts, currency, new Big('0'));
+  var itemGrossPrice = itemOriginalGrossPrice.minus(itemGrossDiscount);
+  var itemNetPrice = calculateNetValue(itemGrossPrice, taxPercentage);
+  var itemTaxValue = calculateTaxValue(itemNetPrice, taxPercentage);
+
+  return {
+    // discount has been subtracted from net, gross and tax values
+    netValue: itemNetPrice,
+    grossValue: itemGrossPrice,
+    taxValue: itemTaxValue,
+    grossDiscount: itemGrossDiscount
+  };
 }
 
-function getTaxValue(grossValue, taxPercentage) {
-  var taxFactor = taxPercentage / 100.0;
-  var netValue = grossValue / (1.0 + taxFactor);
-  var taxValue = grossValue - netValue;
-  return Math.round(taxValue); // in cents
-}
+function calculateExactCartTotals(cart, opts) {
+  var totals = _.reduce(cart, function (memo, item) {
+    var taxPercentage = getTaxPercentage(item.product, opts);
+    var itemValues = calculateItemBreakdown(item, opts.currency, taxPercentage);
+    var newTaxVal = _.isUndefined(memo.taxByP[taxPercentage]) ? itemValues.taxValue : memo.taxByP[taxPercentage].plus(itemValues.taxValue);
 
-function calculateTotalForItems(cart) {
-  var total = _.reduce(cart, function (memo, item) {
-    var itemPrice = calculateItemPrice(item);
     return {
-      value: memo.value + itemPrice.value,
-      currency: itemPrice.currency
+      // Net total is not returned as it is calculated from rounded values later
+      grossTotal: memo.grossTotal.plus(itemValues.grossValue),
+      grossDiscountTotal: memo.grossDiscountTotal.plus(itemValues.grossDiscount),
+      taxByP: _.extend({}, memo.taxByP, _defineProperty({}, taxPercentage, newTaxVal))
     };
-  }, { value: 0, currency: 'EUR' });
-
-  return total;
-}
-
-function _calculateDiscountTotal(total, discountableTotal) {
-  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var promotion = opts.promotion;
-
-  if (!promotion) {
-    return total;
-  }
-
-  if (!opts.ignorePromotionExpiry && _.get(promotion, 'hasExpired')) {
-    throw new Error('Promotion (' + promotion.promotionCode + ') has expired');
-  }
-
-  var resolvedDiscountableTotal = _.startsWith(promotion.promotionCode, 'PLATINUM') ? total : discountableTotal;
-
-  var discount = promotionToDiscount(resolvedDiscountableTotal, promotion);
-  var newTotal = _createPriceObject({
-    value: total.value - discount.value,
-    currency: total.currency
+  }, {
+    grossTotal: new Big('0'),
+    grossDiscountTotal: new Big('0'),
+    taxByP: {}
   });
 
-  return _.merge({}, newTotal, { discount: discount });
+  return totals;
 }
 
-// IMPORTANT!
-// _createDiscountPriceObject must be used to create the discount price
-function promotionToDiscount(total, promotion) {
-  switch (promotion.type) {
-    case 'FIXED':
-      if (total.currency !== promotion.currency) {
-        throw new Error('Promotion currency mismatches the total value: ' + total.currency + ' !== ' + promotion.currency);
-      }
-      return _createDiscountPriceObject(total.value, {
-        value: promotion.value,
-        currency: promotion.currency
-      });
+function enrichAndValidateCartItems(cart, opts) {
+  var cartProducts = _.map(cart, function (item) {
+    var product = _.find(products, function (p) {
+      return p.id === item.id;
+    });
+    if (!product) {
+      throw new Error('No such product with id: ' + item.id);
+    }
 
-    case 'PERCENTAGE':
-      return _createDiscountPriceObject(total.value, {
-        // total.value is total price in the currency's lowest amount, e.g. cents
-        // promotion.value is a factor, e.g. 0.2 (-20%) to describe the percentage
-        // discount
-        value: Math.round(total.value * promotion.value),
-        currency: total.currency
-      });
+    return _.extend({}, item, { product: product });
+  });
 
-    default:
-      throw new Error('Invalid promotion type: ' + promotion.type);
-  }
-}
+  validateCart(cartProducts);
 
-function _createDiscountPriceObject(totalValue, promotionPriceObj) {
-  return _createPriceObject({
-    // Make sure the discount can't be more than the total value.
-    value: Math.min(totalValue, promotionPriceObj.value),
-    currency: promotionPriceObj.currency
+  return _.map(cartProducts, function (item) {
+    var product = item.product;
+
+    if (!product.dynamicPrice) {
+      return item;
+    }
+
+    var netPrice = new Big(item.metadata.netValue);
+    var newProduct = _.extend({}, product, {
+      netPrices: _defineProperty({}, opts.currency, netPrice),
+      grossPrices: _defineProperty({}, opts.currency, calculateGrossValue(netPrice, product.vatPercentage))
+    });
+
+    return _.extend({}, item, { product: newProduct });
   });
 }
 
-function _createPriceObject(basicPriceObj) {
-  var fullPriceObj = _.merge({}, basicPriceObj, {
-    label: _toLabel(basicPriceObj),
-    humanValue: _toHumanValue(basicPriceObj)
+function createPriceObject(basePriceObj, currency) {
+  var fullPriceObj = _.merge({}, basePriceObj, {
+    value: Number(basePriceObj.value.toFixed(0)),
+    label: formatPrice(basePriceObj.value, currency),
+    humanValue: valueToRegularUnits(basePriceObj.value, currency)
   });
 
   return fullPriceObj;
 }
 
-function _toLabel(price) {
-  return _toHumanValue(price) + ' ' + getCurrencySymbol(price.currency);
+function formatPrice(value, currency) {
+  var regularValue = valueToRegularUnits(value, currency);
+  return currencyFormatter.format(regularValue, { code: currency });
 }
 
-function _toHumanValue(price) {
-  return (price.value / 100.0).toFixed(2);
-}
+function calculateCartPrice(cart) {
+  var _opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-function getCurrencySymbol(currency) {
-  if (!currency || !_.has(SYMBOLS, currency.toUpperCase())) {
-    throw new Error('Unknown currency: ' + currency);
+  var opts = _.merge({
+    shipToCountry: 'FI',
+    currency: 'EUR'
+  }, _opts);
+
+  var cartItems = enrichAndValidateCartItems(cart, opts);
+  var discountedCart = addDiscountsForItems(cartItems, opts);
+  var cartTotals = calculateExactCartTotals(discountedCart, opts);
+
+  var taxesArr = _.map(taxesObjToArr(cartTotals.taxByP), function (tax) {
+    var roundedTaxValue = tax.value.round(0);
+    var priceObj = createPriceObject({ value: roundedTaxValue }, opts.currency);
+    return _.extend({}, priceObj, { taxPercentage: Number(tax.taxPercentage.toFixed(0)) });
+  });
+  var roundedGrossTotal = cartTotals.grossTotal.round(0);
+  var roundedTaxTotal = _.reduce(taxesArr, function (memo, tax) {
+    return memo.plus(tax.value);
+  }, new Big('0'));
+  // Rounded net price is calculated with this method to make sure net + tax = gross.
+  // See VAT 28 test case
+  var roundedNetTotal = roundedGrossTotal.minus(roundedTaxTotal);
+
+  var grossPriceObj = createPriceObject({
+    value: roundedGrossTotal,
+    currency: opts.currency,
+    zeroDecimalCurrency: isZeroDecimalCurrency(opts.currency)
+  }, opts.currency);
+
+  var pricesObj = _.merge({}, grossPriceObj, {
+    net: createPriceObject({ value: roundedNetTotal }, opts.currency),
+    taxes: taxesArr
+  });
+  if (!cartTotals.grossDiscountTotal.eq(new Big('0'))) {
+    pricesObj.discount = createPriceObject({ value: cartTotals.grossDiscountTotal }, opts.currency);
   }
 
-  return SYMBOLS[currency.toUpperCase()];
+  return pricesObj;
+}
+
+function calculateItemPrice(item) {
+  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  if (opts.onlyUnitPrice) {
+    var unitItem = _.extend({}, item, { quantity: 1 });
+    return calculateCartPrice([unitItem], opts);
+  }
+
+  if (!_.isInteger(item.quantity)) {
+    throw new Error('Item quantity should be an integer. Item: ' + item);
+  }
+  if (item.quantity < 1) {
+    throw new Error('Item quantity should at least 1. Item: ' + item);
+  }
+
+  return calculateCartPrice([item], opts);
 }
 
 module.exports = {
   calculateCartPrice: calculateCartPrice,
   calculateItemPrice: calculateItemPrice,
-  calculateUnitPrice: calculateUnitPrice,
-  getCurrencySymbol: getCurrencySymbol,
-  getItemLabel: getItemLabel
+  isEuCountry: isEuCountry
 };
