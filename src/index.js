@@ -124,7 +124,7 @@ function calculateCartPrice(cart, _opts = {}) {
   const taxesArr = _.map(taxesObjToArr(cartTotals.taxByP), (tax) => {
     const roundedTaxValue = tax.value.round(0);
     const priceObj = createPriceObject({ value: roundedTaxValue }, opts.currency);
-    return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage.toFixed(0) });
+    return _.extend({}, priceObj, { taxPercentage: Number(tax.taxPercentage.toFixed(0)) });
   });
   const roundedGrossTotal = cartTotals.grossTotal.round(0);
   const roundedTaxTotal = _.reduce(taxesArr, (memo, tax) => memo.plus(tax.value), new Big('0'));

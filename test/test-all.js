@@ -2,7 +2,7 @@ const assert = require('assert');
 const _ = require('lodash');
 const priceUtil = require('../src/index');
 
-describe('basic cases', () => {
+describe('cases', () => {
   it('one 30x40cm in cart', () => {
     const cart = [
       {
@@ -12,7 +12,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'FI' });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
@@ -32,6 +32,35 @@ describe('basic cases', () => {
     });
   });
 
+  it('one 30x40cm in cart shipped outside EU', () => {
+    const cart = [
+      {
+        id: 'custom-map-print-30x40cm',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'US' });
+    assert.deepStrictEqual(price, {
+      value: 3900,
+      humanValue: '39.00',
+      currency: 'EUR',
+      zeroDecimalCurrency: false,
+      label: '39,00 €',
+      net: {
+        value: 3900,
+        humanValue: '39.00',
+        label: '39,00 €',
+      },
+      taxes: [{
+        taxPercentage: 0,
+        value: 0,
+        humanValue: '0.00',
+        label: '0,00 €',
+      }],
+    });
+  });
+
   it('unit price for 3x 30x40cm in cart', () => {
     const cart = [
       {
@@ -41,7 +70,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateItemPrice(cart[0], { onlyUnitPrice: true });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 3900,
       humanValue: '39.00',
       currency: 'EUR',
@@ -78,7 +107,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart);
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 20600,
       humanValue: '206.00',
       currency: 'EUR',
@@ -115,7 +144,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart);
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 20890,
       humanValue: '208.90',
       currency: 'EUR',
@@ -156,7 +185,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart);
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 15200,
       humanValue: '152.00',
       currency: 'EUR',
@@ -225,7 +254,7 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart);
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 0,
       humanValue: '0.00',
       currency: 'EUR',
@@ -261,14 +290,14 @@ describe('basic cases', () => {
     ];
 
     const price = priceUtil.calculateCartPrice(cart, { currency: 'EUR' });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 5590,
       humanValue: '55.90',
       currency: 'EUR',
       zeroDecimalCurrency: false,
       label: '55,90 €',
       net: {
-        humanValue: 54.56,
+        humanValue: '54.56',
         label: '54,56 €',
         value: 5456,
       },
@@ -394,7 +423,7 @@ describe('basic cases', () => {
       },
     });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 4900,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -422,7 +451,7 @@ describe('basic cases', () => {
       quantity: 1,
     });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 690,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -513,7 +542,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 19580,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -573,7 +602,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 1980,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -612,28 +641,6 @@ describe('basic cases', () => {
     });
   });
 
-  it('inconsistent currency between promotion and opts.currency', () => {
-    const cart = [
-      {
-        quantity: 1,
-        id: 'custom-map-print-30x40cm',
-      },
-    ];
-
-    const promotion = {
-      type: 'FIXED',
-      currency: 'EUR',
-      value: 1000,
-      promotionCode: 'TEST',
-      hasExpired: false,
-    };
-
-    assert.throws(
-      () => priceUtil.calculateCartPrice(cart, { promotion, currency: 'USD' }),
-      /Promotion currency \(EUR\) mismatches the requested currency \(USD\)/
-    );
-  });
-
   it('percentage discount promotion with rounding error possibility', () => {
     // Price: 8 * 39€ = 312€
     const cart = _.times(8, () => ({
@@ -662,7 +669,7 @@ describe('basic cases', () => {
     // The way we fix this is by rounding the gross price first, then calculating
     // rounded taxes, and proceed to calculating what's left = net sum
     const price = priceUtil.calculateCartPrice(cart, { promotion });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 20810,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -707,7 +714,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { currency: 'USD', promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 26940,
       currency: 'USD',
       zeroDecimalCurrency: false,
@@ -753,7 +760,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'FI', promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 0,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -799,7 +806,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 0,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -852,7 +859,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 1500,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -916,7 +923,7 @@ describe('basic cases', () => {
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 0,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -973,7 +980,7 @@ describe('basic cases', () => {
     };
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 7590,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -1065,7 +1072,7 @@ describe('basic cases', () => {
       promotion,
       ignorePromotionExpiry: true,
     });
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 3400,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -1109,7 +1116,7 @@ describe('basic cases', () => {
     // never happens.
     const price = priceUtil.calculateCartPrice(cart);
 
-    assert.deepEqual(price, {
+    assert.deepStrictEqual(price, {
       value: 78000,
       currency: 'EUR',
       zeroDecimalCurrency: false,
@@ -1133,5 +1140,58 @@ describe('basic cases', () => {
         },
       ],
     });
+  });
+});
+
+describe('currencies', () => {
+  it('one 12x18inch with USD', () => {
+    const cart = [
+      {
+        id: 'custom-map-print-12x18inch',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart, { shipToCountry: 'US', currency: 'USD' });
+    assert.deepStrictEqual(price, {
+      value: 4490,
+      humanValue: '44.90',
+      currency: 'USD',
+      zeroDecimalCurrency: false,
+      label: '$44.90',
+      net: {
+        value: 4490,
+        humanValue: '44.90',
+        label: '$44.90',
+      },
+      taxes: [{
+        taxPercentage: 0,
+        value: 0,
+        humanValue: '0.00',
+        label: '$0.00',
+      }],
+    });
+  });
+
+  it('inconsistent currency between promotion and opts.currency', () => {
+    const cart = [
+      {
+        quantity: 1,
+        id: 'custom-map-print-30x40cm',
+      },
+    ];
+
+    const promotion = {
+      type: 'FIXED',
+      currency: 'EUR',
+      value: 1000,
+      promotionCode: 'TEST',
+      hasExpired: false,
+    };
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice(cart, { promotion, currency: 'USD' }),
+      /Promotion currency \(EUR\) mismatches the requested currency \(USD\)/
+    );
   });
 });
