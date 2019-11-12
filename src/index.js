@@ -2,11 +2,16 @@ const _ = require('lodash');
 const Big = require('big.js');
 const currencyFormatter = require('currency-formatter');
 const { isEuCountry } = require('./country');
-const { bigMin } = require('./big-utils');
-const { calculateGrossValue, calculateTaxValue, getTaxPercentage } = require('./tax');
+const {
+  calculateGrossValue,
+  calculateTaxValue,
+  calculateNetValue,
+  getTaxPercentage,
+} = require('./tax');
+const { addDiscountsForItems } = require('./discount');
+const { validateCart } = require('./validation');
 const { valueToRegularUnits, isZeroDecimalCurrency } = require('./stripe');
 const { products } = require('./products');
-const RULE_FUNCTIONS = require('./rules');
 
 function taxesObjToArr(taxByP) {
   const arr = _.map(taxByP, (value, p) => {
@@ -16,60 +21,16 @@ function taxesObjToArr(taxByP) {
   return _.sortBy(arr, 'taxPercentage');
 }
 
-function validateDynamicPrice(item) {
-  if (!_.isPlainObject(item.metadata)) {
-    throw new Error(`No metadata object found for dynamic priced item ${item.id}`);
-  }
-
-  if (!_.isFinite(item.metadata.netValue)) {
-    throw new Error(`No metadata.netValue found for dynamic priced item ${item.id}`);
-  }
-}
-
-function executeRulesForCart(cart) {
-  const cartErrs = _.map(cart, (item) => {
-    if (!item.product.rules) {
-      return [];
-    }
-
-    return executeRulesForItem(item.product.rules, item);
-  });
-
-  _.forEach(cartErrs, (itemErrs, itemIndex) => {
-    _.forEach(itemErrs, (err) => {
-      if (err) {
-        console.error(`Error in cart item with index ${itemIndex}`);
-        throw err;
-      }
-    });
-  });
-}
-
-function executeRulesForItem(rules, item) {
-  const itemErrs = _.map(rules, (rule) => {
-    const ruleFunc = RULE_FUNCTIONS[rule.type];
-    return ruleFunc(rule, item);
-  });
-  return itemErrs;
-}
-
 function calculateItemBreakdown(item, currency, taxPercentage) {
-  let itemOriginalNetPrice;
-  if (item.product.dynamicPrice) {
-    validateDynamicPrice(item);
-    itemOriginalNetPrice = new Big(item.metadata.netValue).times(item.quantity);
-  } else if (!_.has(item.product.netPrices, currency)) {
+  if (!_.get(item, ['product', 'grossPrices', currency])) {
     throw new Error(`Item ${item.id} does not have price in ${currency} currency`);
-  } else {
-    itemOriginalNetPrice = item.product.netPrices[currency].times(item.quantity);
   }
 
-  const unitNetDiscount = _.get(item.netDiscounts, currency, new Big(0));
-  const itemNetDiscount = unitNetDiscount.times(item.quantity);
-  const itemGrossDiscount = calculateGrossValue(itemNetDiscount, taxPercentage);
-  const itemNetPrice = itemOriginalNetPrice.minus(itemNetDiscount);
+  const itemOriginalGrossPrice = item.product.grossPrices[currency].times(item.quantity);
+  const itemGrossDiscount = _.get(item.grossDiscounts, currency, new Big('0'));
+  const itemGrossPrice = itemOriginalGrossPrice.minus(itemGrossDiscount);
+  const itemNetPrice = calculateNetValue(itemGrossPrice, taxPercentage);
   const itemTaxValue = calculateTaxValue(itemNetPrice, taxPercentage);
-  const itemGrossPrice = calculateGrossValue(itemNetPrice, taxPercentage);
 
   return {
     // discount has been subtracted from net, gross and tax values
@@ -80,7 +41,7 @@ function calculateItemBreakdown(item, currency, taxPercentage) {
   };
 }
 
-function calculateCartTotals(cart, opts) {
+function calculateExactCartTotals(cart, opts) {
   const totals = _.reduce(cart, (memo, item) => {
     const taxPercentage = getTaxPercentage(item.product, opts);
     const itemValues = calculateItemBreakdown(item, opts.currency, taxPercentage);
@@ -90,7 +51,7 @@ function calculateCartTotals(cart, opts) {
       : memo.taxByP[taxPercentage].plus(itemValues.taxValue);
 
     return {
-      netTotal: memo.netTotal.plus(itemValues.netValue),
+      // Net total is not returned as it is calculated from rounded values later
       grossTotal: memo.grossTotal.plus(itemValues.grossValue),
       grossDiscountTotal: memo.grossDiscountTotal.plus(itemValues.grossDiscount),
       taxByP: _.extend({}, memo.taxByP, {
@@ -98,16 +59,15 @@ function calculateCartTotals(cart, opts) {
       }),
     };
   }, {
-    netTotal: new Big(0),
-    grossTotal: new Big(0),
-    grossDiscountTotal: new Big(0),
+    grossTotal: new Big('0'),
+    grossDiscountTotal: new Big('0'),
     taxByP: {},
   });
 
   return totals;
 }
 
-function mergeCartItemsToProducts(cart) {
+function enrichAndValidateCartItems(cart, opts) {
   const cartProducts = _.map(cart, (item) => {
     const product = _.find(products, p => p.id === item.id);
     if (!product) {
@@ -116,75 +76,27 @@ function mergeCartItemsToProducts(cart) {
 
     return _.extend({}, item, { product });
   });
-  return cartProducts;
-}
 
-// TODO: rules
-function addNetDiscounts(item, promotion) {
-  if (!promotion) {
-    return item;
-  }
+  validateCart(cartProducts);
 
-  const promotionDiscountClass = _.startsWith(promotion.promotionCode, 'PLATINUM')
-    ? 1
-    : 0;
+  return _.map(cartProducts, (item) => {
+    const { product } = item;
+    if (!product.dynamicPrice) {
+      return item;
+    }
 
-  // If the promotion code does not cover the product, don't add discount
-  if (item.product.discountClass <= promotionDiscountClass) {
-    return item;
-  }
+    const netPrice = new Big(item.metadata.netValue);
+    const newProduct = _.extend({}, product, {
+      netPrices: {
+        [opts.currency]: netPrice,
+      },
+      grossPrices: {
+        [opts.currency]: calculateGrossValue(netPrice, product.vatPercentage),
+      },
+    });
 
-  const netDiscounts = {};
-  _.forEach(item.product.netPrices, (netValue, currency) => {
-    const netPrice = { value: netValue, currency };
-    netDiscounts[currency] = promotionToNetDiscount(netPrice, promotion);
+    return _.extend({}, item, { product: newProduct });
   });
-
-  return _.extend({}, item, { netDiscounts });
-}
-
-function addCartDiscountsAndProductInfo(cart, opts = {}) {
-  const cartItems = mergeCartItemsToProducts(cart);
-  const { promotion } = opts;
-  if (!promotion) {
-    return cartItems;
-  }
-
-  if (!opts.ignorePromotionExpiry && _.get(promotion, 'hasExpired')) {
-    throw new Error(`Promotion (${promotion.promotionCode}) has expired`);
-  }
-
-  const discountedCartItems = _.map(cartItems, p => addNetDiscounts(p, promotion));
-  return discountedCartItems;
-}
-
-function promotionToNetDiscount(netPrice, promotion) {
-  switch (promotion.type) {
-    case 'FIXED':
-      if (netPrice.currency !== promotion.currency) {
-        throw new Error(`Promotion currency mismatches the total value: ${netPrice.currency} !== ${promotion.currency}`);
-      }
-
-      const promotionValue = new Big(promotion.value).round(0);
-
-      // Make sure the discount can't be more than the total value.
-      return {
-        value: bigMin(promotionValue, netPrice.value),
-        currency: netPrice.currency,
-      };
-    case 'PERCENTAGE':
-      // promotion.value is a factor, e.g. 0.2 (-20%) to describe the percentage
-      // discount
-      const discountValue = netPrice.value.times(new Big(promotion.value));
-
-      // Make sure the discount can't be more than the total value.
-      return {
-        value: bigMin(discountValue, netPrice.value),
-        currency: netPrice.currency,
-      };
-    default:
-      throw new Error(`Invalid promotion type: ${promotion.type}`);
-  }
 }
 
 function createPriceObject(basePriceObj, currency) {
@@ -208,26 +120,39 @@ function calculateCartPrice(cart, _opts = {}) {
     currency: 'EUR',
   }, _opts);
 
-  const discountedCart = addCartDiscountsAndProductInfo(cart, opts);
+  const cartItems = enrichAndValidateCartItems(cart, opts);
+  const discountedCart = addDiscountsForItems(cartItems, opts);
+
   console.log(JSON.stringify(discountedCart, null ,2));
-  const cartTotals = calculateCartTotals(discountedCart, opts);
+  const cartTotals = calculateExactCartTotals(discountedCart, opts);
   console.log(JSON.stringify(cartTotals, null ,2));
 
-  executeRulesForCart(discountedCart);
+  const taxesArr = _.map(taxesObjToArr(cartTotals.taxByP), (tax) => {
+    const roundedTaxValue = tax.value.round(0);
+    const priceObj = createPriceObject({ value: roundedTaxValue }, opts.currency);
+    return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage });
+  });
+  const roundedGrossTotal = cartTotals.grossTotal.round(0);
+  const roundedTaxTotal = _.reduce(taxesArr, (memo, tax) => memo.plus(tax.value), new Big('0'))
+  // Rounded net price is calculated with this method to make sure net + tax = gross.
+  // See VAT 28 test case
+  const roundedNetTotal = roundedGrossTotal.minus(roundedTaxTotal);
 
   const grossPriceObj = createPriceObject({
-    value: cartTotals.grossTotal,
+    value: roundedGrossTotal,
     currency: opts.currency,
     zeroDecimalCurrency: isZeroDecimalCurrency(opts.currency),
   }, opts.currency);
 
-  return _.merge({}, grossPriceObj, {
-    net: createPriceObject({ value: cartTotals.netTotal }, opts.currency),
-    taxes: _.map(taxesObjToArr(cartTotals.taxByP), (tax) => {
-      const priceObj = createPriceObject({ value: tax.value }, opts.currency);
-      return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage });
-    }),
+  const pricesObj = _.merge({}, grossPriceObj, {
+    net: createPriceObject({ value: roundedNetTotal }, opts.currency),
+    taxes: taxesArr,
   });
+  if (!cartTotals.grossDiscountTotal.eq(new Big('0'))) {
+    pricesObj.discount = createPriceObject({ value: cartTotals.grossDiscountTotal }, opts.currency);
+  }
+
+  return pricesObj;
 }
 
 function calculateItemPrice(item, opts = {}) {

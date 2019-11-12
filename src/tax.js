@@ -4,7 +4,7 @@ const { isEuCountry } = require('./country');
 function getTaxPercentage(product, opts) {
   const taxPercentage = isEuCountry(opts.shipToCountry)
     ? product.vatPercentage
-    : new Big(0);
+    : new Big('0');
   return taxPercentage;
 }
 

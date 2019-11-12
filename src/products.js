@@ -181,7 +181,7 @@ const products = [
       { type: 'MAX_QUANTITY', payload: 1 },
     ],
     vatPercentage: new Big(24),
-    discountClass: 0,
+    discountClass: 1,
     grossPrices: {
       /*
       6.9 EUR = 7.64 USD ~ *7.9 USD*  (= 7.14 EUR)
@@ -215,15 +215,15 @@ const products = [
     vatPercentage: new Big(24),
     discountClass: 1,
     grossPrices: {
-      EUR: new Big(0),
-      USD: new Big(0),
-      JPY: new Big(0),
-      AUD: new Big(0),
-      GBP: new Big(0),
-      CAD: new Big(0),
-      SEK: new Big(0),
-      DKK: new Big(0),
-      NOK: new Big(0),
+      EUR: new Big('0'),
+      USD: new Big('0'),
+      JPY: new Big('0'),
+      AUD: new Big('0'),
+      GBP: new Big('0'),
+      CAD: new Big('0'),
+      SEK: new Big('0'),
+      DKK: new Big('0'),
+      NOK: new Big('0'),
     },
   },
 
@@ -267,17 +267,58 @@ const products = [
       { type: 'MAX_QUANTITY', payload: 1 },
       { type: 'MIN_NET_PRICE', payload: 1000 },
     ],
-    vatPercentage: new Big(0),
+    vatPercentage: new Big('0'),
     dynamicPrice: true,
   },
 
   {
-    id: 'test-product-vat-28',
-    name: 'Test product VAT 28',
+    id: 'test-product-vat-0',
+    name: 'Test product VAT 0',
+    vatPercentage: new Big('0'),
+    discountClass: 0,
+    grossPrices: {
+      EUR: new Big(1000),
+      USD: new Big(1000),
+    },
+  },
+  {
+    id: 'test-product-vat-10',
+    name: 'Test product VAT 10',
+    vatPercentage: new Big(10),
+    discountClass: 0,
+    grossPrices: {
+      EUR: new Big(1000),
+      USD: new Big(1000),
+    },
+  },
+  {
+    id: 'test-product-vat-14',
+    name: 'Test product VAT 14',
+    vatPercentage: new Big(14),
+    discountClass: 0,
+    grossPrices: {
+      EUR: new Big(1000),
+      USD: new Big(1000),
+    },
+  },
+  {
+    id: 'test-product-vat-24',
+    name: 'Test product VAT 24',
+    vatPercentage: new Big(24),
+    discountClass: 0,
+    grossPrices: {
+      EUR: new Big(1000),
+      USD: new Big(1000),
+    },
+  },
+  {
+    id: 'test-map-30x40cm-vat-28',
+    name: 'Test map 30x40cm VAT 28',
     vatPercentage: new Big(28),
     discountClass: 0,
     grossPrices: {
       EUR: new Big(3900),
+      USD: new Big(4490),
     },
   },
 ];
