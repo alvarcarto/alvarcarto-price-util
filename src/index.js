@@ -14,7 +14,7 @@ const { valueToRegularUnits, isZeroDecimalCurrency } = require('./stripe');
 const { products } = require('./products');
 
 function taxesObjToArr(taxByP) {
-  const arr = _.map(taxByP, (value, p) => ({ taxPercentage: Number(p), value }));
+  const arr = _.map(taxByP, (value, p) => ({ taxPercentage: new Big(p), value }));
 
   return _.sortBy(arr, 'taxPercentage');
 }
@@ -124,7 +124,7 @@ function calculateCartPrice(cart, _opts = {}) {
   const taxesArr = _.map(taxesObjToArr(cartTotals.taxByP), (tax) => {
     const roundedTaxValue = tax.value.round(0);
     const priceObj = createPriceObject({ value: roundedTaxValue }, opts.currency);
-    return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage });
+    return _.extend({}, priceObj, { taxPercentage: tax.taxPercentage.toFixed(0) });
   });
   const roundedGrossTotal = cartTotals.grossTotal.round(0);
   const roundedTaxTotal = _.reduce(taxesArr, (memo, tax) => memo.plus(tax.value), new Big('0'));
