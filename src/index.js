@@ -45,7 +45,6 @@ function calculateExactCartTotals(cart, opts) {
   const totals = _.reduce(cart, (memo, item) => {
     const taxPercentage = getTaxPercentage(item.product, opts);
     const itemValues = calculateItemBreakdown(item, opts.currency, taxPercentage);
-    console.log(JSON.stringify(itemValues, null ,2))
     const newTaxVal = _.isUndefined(memo.taxByP[taxPercentage])
       ? itemValues.taxValue
       : memo.taxByP[taxPercentage].plus(itemValues.taxValue);
@@ -122,10 +121,7 @@ function calculateCartPrice(cart, _opts = {}) {
 
   const cartItems = enrichAndValidateCartItems(cart, opts);
   const discountedCart = addDiscountsForItems(cartItems, opts);
-
-  console.log(JSON.stringify(discountedCart, null ,2));
   const cartTotals = calculateExactCartTotals(discountedCart, opts);
-  console.log(JSON.stringify(cartTotals, null ,2));
 
   const taxesArr = _.map(taxesObjToArr(cartTotals.taxByP), (tax) => {
     const roundedTaxValue = tax.value.round(0);

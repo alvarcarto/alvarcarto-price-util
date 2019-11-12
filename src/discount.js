@@ -3,18 +3,13 @@ const Big = require('big.js');
 const { bigMin } = require('./big-utils');
 
 function fixedPromotionToGrossDiscounts(item, promotion, alreadyDiscountedCartItems) {
-  console.log('product', item.product)
   const itemGrossValue = item.product.grossPrices[promotion.currency].times(item.quantity);
-  console.log('itemGrossValue', itemGrossValue.toFixed(2))
   const promotionValueUsed = _.reduce(alreadyDiscountedCartItems, (memo, cartItem) => {
     const itemDiscountValue = _.get(cartItem.grossDiscounts, promotion.currency, new Big('0'));
     return memo.plus(itemDiscountValue);
   }, new Big('0'));
 
-  console.log('promotionValueUsed', promotionValueUsed.toFixed(2))
-
   const promotionValueLeft = new Big(promotion.value).round(0).minus(promotionValueUsed);
-  console.log('promotionValueLeft', promotionValueLeft.toFixed(2))
 
   // Fixed discounts are tied to a single currency
   return {

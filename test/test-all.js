@@ -662,7 +662,6 @@ describe('basic cases', () => {
     // The way we fix this is by rounding the gross price first, then calculating
     // rounded taxes, and proceed to calculating what's left = net sum
     const price = priceUtil.calculateCartPrice(cart, { promotion });
-    console.log(JSON.stringify(price, null, 2))
     assert.deepEqual(price, {
       value: 20810,
       currency: "EUR",
@@ -974,7 +973,6 @@ describe('basic cases', () => {
     };
 
     const price = priceUtil.calculateCartPrice(cart, { promotion });
-    console.log(JSON.stringify(price, null, 2))
     assert.deepEqual(price, {
       value: 7590,
       currency: "EUR",
@@ -1067,7 +1065,6 @@ describe('basic cases', () => {
       promotion,
       ignorePromotionExpiry: true,
     });
-    console.log(JSON.stringify(price, null, 2))
     assert.deepEqual(price, {
       value: 3400,
       currency: "EUR",
@@ -1111,7 +1108,6 @@ describe('basic cases', () => {
     // where this same "bug" occurs but with Finland's current VAT %, this
     // never happens.
     const price = priceUtil.calculateCartPrice(cart);
-    console.log(JSON.stringify(price, null, 2))
 
     assert.deepEqual(price, {
       value: 78000,
