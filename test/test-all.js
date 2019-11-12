@@ -1223,4 +1223,48 @@ describe('currencies', () => {
       /Promotion currency \(EUR\) mismatches the requested currency \(USD\)/
     );
   });
+
+  it('gift card with GBP currency', () => {
+    const cart = [
+      {
+        id: 'gift-card-value',
+        metadata: {
+          netValue: 4900,
+        },
+        quantity: 1,
+      },
+      {
+        id: 'physical-gift-card',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart, { currency: 'GBP' });
+    assert.deepStrictEqual(price, {
+      value: 5490,
+      humanValue: '54.90',
+      currency: 'GBP',
+      zeroDecimalCurrency: false,
+      label: '£54.90',
+      net: {
+        humanValue: '53.76',
+        label: '£53.76',
+        value: 5376,
+      },
+      taxes: [
+        {
+          humanValue: '0.00',
+          label: '£0.00',
+          taxPercentage: 0,
+          value: 0,
+        },
+        {
+          humanValue: '1.14',
+          label: '£1.14',
+          taxPercentage: 24,
+          value: 114,
+        },
+      ],
+    });
+  });
 });
