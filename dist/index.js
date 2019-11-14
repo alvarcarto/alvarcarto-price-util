@@ -113,6 +113,10 @@ function getSupportedCurrencies() /* shipToCountry */{
   return supportedCurrencies;
 }
 
+function isSupportedCurrency(currency, shipToCountry) {
+  return _.includes(getSupportedCurrencies(shipToCountry), currency.toUpperCase());
+}
+
 function createPriceObject(basePriceObj, currency) {
   var fullPriceObj = _.merge({}, basePriceObj, {
     value: Number(basePriceObj.value.toFixed(0)),
@@ -192,5 +196,6 @@ module.exports = {
   calculateCartPrice: calculateCartPrice,
   calculateItemPrice: calculateItemPrice,
   isEuCountry: isEuCountry,
+  isSupportedCurrency: isSupportedCurrency,
   getSupportedCurrencies: getSupportedCurrencies
 };
