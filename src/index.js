@@ -11,7 +11,7 @@ const {
 const { addDiscountsForItems } = require('./discount');
 const { validateCart } = require('./validation');
 const { valueToRegularUnits, isZeroDecimalCurrency } = require('./stripe');
-const { products } = require('./products');
+const { products, supportedCurrencies } = require('./products');
 
 function taxesObjToArr(taxByP) {
   const arr = _.map(taxByP, (value, p) => ({ taxPercentage: new Big(p), value }));
@@ -96,6 +96,10 @@ function enrichAndValidateCartItems(cart, opts) {
   });
 }
 
+function getSupportedCurrencies(shipToCountry) {
+  return supportedCurrencies
+}
+
 function createPriceObject(basePriceObj, currency) {
   const fullPriceObj = _.merge({}, basePriceObj, {
     value: Number(basePriceObj.value.toFixed(0)),
@@ -169,4 +173,5 @@ module.exports = {
   calculateCartPrice,
   calculateItemPrice,
   isEuCountry,
+  getSupportedCurrencies,
 };

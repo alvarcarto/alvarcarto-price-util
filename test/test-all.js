@@ -1267,4 +1267,17 @@ describe('currencies', () => {
       ],
     });
   });
+
+  it('getSupportedCurrencies', () => {
+    // At the moment shipToCountry does not affect currencies
+    const currencies = priceUtil.getSupportedCurrencies('FI');
+    const currencies2 = priceUtil.getSupportedCurrencies('US');
+    const currencies3 = priceUtil.getSupportedCurrencies();
+
+    const expectedCurrencies = ['EUR', 'USD', 'JPY', 'AUD', 'GBP', 'CAD', 'SEK', 'DKK', 'NOK'];
+
+    assert.deepStrictEqual(expectedCurrencies, currencies);
+    assert.deepStrictEqual(expectedCurrencies, currencies2);
+    assert.deepStrictEqual(expectedCurrencies, currencies3);
+  });
 });
