@@ -1280,4 +1280,14 @@ describe('currencies', () => {
     assert.deepStrictEqual(expectedCurrencies, currencies2);
     assert.deepStrictEqual(expectedCurrencies, currencies3);
   });
+
+  it('isSupportedCurrency', () => {
+    // At the moment shipToCountry does not affect currencies
+    assert.strictEqual(true, priceUtil.isSupportedCurrency('usd'));
+    assert.strictEqual(true, priceUtil.isSupportedCurrency('USD'));
+
+    assert.strictEqual(true, priceUtil.isSupportedCurrency('EUR'));
+    assert.strictEqual(true, priceUtil.isSupportedCurrency('eur'));
+    assert.strictEqual(false, priceUtil.isSupportedCurrency('EURO'));
+  });
 });
