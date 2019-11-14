@@ -96,8 +96,8 @@ function enrichAndValidateCartItems(cart, opts) {
   });
 }
 
-function getSupportedCurrencies(shipToCountry) {
-  return supportedCurrencies
+function getSupportedCurrencies(/* shipToCountry */) {
+  return supportedCurrencies;
 }
 
 function createPriceObject(basePriceObj, currency) {

@@ -363,7 +363,7 @@ _.forEach(nonDynamicLive, (product) => {
     _.forEach(nonDynamicLive, (product2) => {
       const product2Currencies = _.keys(product2.grossPrices);
       if (!_.includes(product2Currencies, currency)) {
-        throw new Error(`Inconsistent currency definitions in products ${product.id} and ${product2.id}`)
+        throw new Error(`Inconsistent currency definitions in products ${product.id} and ${product2.id}`);
       }
     });
   });
