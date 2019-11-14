@@ -26,7 +26,8 @@ var _require5 = require('./stripe'),
     isZeroDecimalCurrency = _require5.isZeroDecimalCurrency;
 
 var _require6 = require('./products'),
-    products = _require6.products;
+    products = _require6.products,
+    supportedCurrencies = _require6.supportedCurrencies;
 
 function taxesObjToArr(taxByP) {
   var arr = _.map(taxByP, function (value, p) {
@@ -108,6 +109,10 @@ function enrichAndValidateCartItems(cart, opts) {
   });
 }
 
+function getSupportedCurrencies() /* shipToCountry */{
+  return supportedCurrencies;
+}
+
 function createPriceObject(basePriceObj, currency) {
   var fullPriceObj = _.merge({}, basePriceObj, {
     value: Number(basePriceObj.value.toFixed(0)),
@@ -186,5 +191,6 @@ function calculateItemPrice(item) {
 module.exports = {
   calculateCartPrice: calculateCartPrice,
   calculateItemPrice: calculateItemPrice,
-  isEuCountry: isEuCountry
+  isEuCountry: isEuCountry,
+  getSupportedCurrencies: getSupportedCurrencies
 };

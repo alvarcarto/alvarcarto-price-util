@@ -10,6 +10,7 @@ var _require = require('./tax'),
 var products = [{
   id: 'custom-map-print-30x40cm',
   name: 'Map print 30x40cm',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -40,6 +41,7 @@ var products = [{
 }, {
   id: 'custom-map-print-50x70cm',
   name: 'Map print 50x70cm',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -67,6 +69,7 @@ var products = [{
 }, {
   id: 'custom-map-print-70x100cm',
   name: 'Map print 70x100cm',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -94,6 +97,7 @@ var products = [{
 }, {
   id: 'custom-map-print-12x18inch',
   name: 'Map print 12x18inch',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -121,6 +125,7 @@ var products = [{
 }, {
   id: 'custom-map-print-18x24inch',
   name: 'Map print 18x24inch',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -148,6 +153,7 @@ var products = [{
 }, {
   id: 'custom-map-print-24x36inch',
   name: 'Map print 24x36inch',
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 0,
   grossPrices: {
@@ -176,6 +182,7 @@ var products = [{
   id: 'physical-gift-card',
   name: 'Premium gift card',
   rules: [{ type: 'MAX_QUANTITY', payload: 1 }],
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 1,
   grossPrices: {
@@ -204,6 +211,7 @@ var products = [{
   id: 'shipping-express',
   name: 'Express shipping',
   rules: [{ type: 'MAX_QUANTITY', payload: 1 }],
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 1,
   grossPrices: {
@@ -221,6 +229,7 @@ var products = [{
   id: 'production-high-priority',
   name: 'Priority production',
   rules: [{ type: 'MAX_QUANTITY', payload: 1 }],
+  live: true,
   vatPercentage: new Big(24),
   discountClass: 1,
   grossPrices: {
@@ -249,6 +258,7 @@ var products = [{
   id: 'gift-card-value',
   name: 'Gift card value',
   discountClass: 1,
+  live: true,
   rules: [{ type: 'MAX_QUANTITY', payload: 1 }, { type: 'MIN_NET_PRICE', payload: 1000 }],
   vatPercentage: new Big('0'),
   dynamicPrice: true
@@ -319,6 +329,26 @@ var richenedProducts = _.map(products, function (product) {
   return newProduct;
 });
 
+// Validate that all live and non-dynamic products
+// have the same currency definitions
+var nonDynamicLive = _.filter(richenedProducts, function (p) {
+  return p.live && !p.dynamicPrice;
+});
+_.forEach(nonDynamicLive, function (product) {
+  _.forEach(product.grossPrices, function (value, currency) {
+    _.forEach(nonDynamicLive, function (product2) {
+      var product2Currencies = _.keys(product2.grossPrices);
+      if (!_.includes(product2Currencies, currency)) {
+        throw new Error('Inconsistent currency definitions in products ' + product.id + ' and ' + product2.id);
+      }
+    });
+  });
+});
+
+// We already made sure all products have the same currencies
+var supportedCurrencies = _.keys(nonDynamicLive[0].grossPrices);
+
 module.exports = {
-  products: richenedProducts
+  products: richenedProducts,
+  supportedCurrencies: supportedCurrencies
 };
