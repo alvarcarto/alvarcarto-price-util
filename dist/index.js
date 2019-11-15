@@ -37,6 +37,41 @@ function taxesObjToArr(taxByP) {
   return _.sortBy(arr, 'taxPercentage');
 }
 
+// Transforms locale objects to strings with the given locale
+function deepResolveLocale(obj, locale) {
+  var newObj = {};
+
+  _.forEach(obj, function (val, key) {
+    var isLocaleObj = _.isPlainObject(val) && _.has(val, 'en-US');
+    if (isLocaleObj) {
+      newObj[key] = val[locale];
+    } else if (_.isPlainObject(val)) {
+      newObj[key] = deepResolveLocale(val, locale);
+    } else {
+      newObj[key] = val;
+    }
+  });
+  return newObj;
+}
+
+function getProduct(productId) {
+  var _opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  var opts = _.merge({
+    locale: 'en-US'
+  }, _opts);
+
+  var product = _.find(products, function (p) {
+    return p.id === productId;
+  });
+  if (!product) {
+    throw new Error('No such product with id: ' + productId);
+  }
+
+  var localisedProduct = deepResolveLocale(product, opts.locale);
+  return localisedProduct;
+}
+
 function calculateItemBreakdown(item, currency, taxPercentage) {
   if (!_.get(item, ['product', 'grossPrices', currency])) {
     throw new Error('Item ' + item.id + ' does not have price in ' + currency + ' currency');
@@ -80,13 +115,7 @@ function calculateExactCartTotals(cart, opts) {
 
 function enrichAndValidateCartItems(cart, opts) {
   var cartProducts = _.map(cart, function (item) {
-    var product = _.find(products, function (p) {
-      return p.id === item.id;
-    });
-    if (!product) {
-      throw new Error('No such product with id: ' + item.id);
-    }
-
+    var product = getProduct(item.id);
     return _.extend({}, item, { product: product });
   });
 
@@ -197,5 +226,6 @@ module.exports = {
   calculateItemPrice: calculateItemPrice,
   isEuCountry: isEuCountry,
   isSupportedCurrency: isSupportedCurrency,
-  getSupportedCurrencies: getSupportedCurrencies
+  getSupportedCurrencies: getSupportedCurrencies,
+  getProduct: getProduct
 };
