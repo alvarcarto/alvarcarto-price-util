@@ -6,7 +6,7 @@
 
 var rules = {
   MIN_NET_PRICE: function MIN_NET_PRICE(rule, item) {
-    var netValue = item.product.dynamicPrice ? item.metadata.netValue : item.netValue;
+    var netValue = item.product.dynamicPrice ? item.customisation.netValue : item.netValue;
 
     if (netValue < rule.payload) {
       return "Item " + item.id + " net price must be at least " + rule.payload;

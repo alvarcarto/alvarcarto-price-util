@@ -20,12 +20,12 @@ function forEachCartItemAssert(cart, func) {
 }
 
 function validateDynamicPrice(item) {
-  if (!_.isPlainObject(item.metadata)) {
-    throw new Error('No metadata object found for dynamic priced item ' + item.id);
+  if (!_.isPlainObject(item.customisation)) {
+    throw new Error('No customisation object found for dynamic priced item ' + item.id);
   }
 
-  if (!_.isFinite(item.metadata.netValue)) {
-    throw new Error('No metadata.netValue found for dynamic priced item ' + item.id);
+  if (!_.isFinite(item.customisation.netValue)) {
+    throw new Error('No customisation.netValue found for dynamic priced item ' + item.id);
   }
 }
 

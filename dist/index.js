@@ -99,7 +99,7 @@ function enrichAndValidateCartItems(cart, opts) {
       return item;
     }
 
-    var netPrice = new Big(item.metadata.netValue);
+    var netPrice = new Big(item.customisation.netValue);
     var newProduct = _.extend({}, product, {
       netPrices: _defineProperty({}, opts.currency, netPrice),
       grossPrices: _defineProperty({}, opts.currency, calculateGrossValue(netPrice, product.vatPercentage))
