@@ -1300,6 +1300,9 @@ describe('products', () => {
     assert.deepStrictEqual(product, {
       sku: 'custom-map-print-30x40cm',
       name: 'Map print 30x40cm',
+      metadata: {
+        size: '30x40cm',
+      },
       live: true,
       shippable: true,
       vatPercentage: new Big(24),
@@ -1334,6 +1337,9 @@ describe('products', () => {
     assert.deepStrictEqual(product, {
       sku: 'custom-map-print-30x40cm',
       name: 'Karttajuliste 30x40cm',
+      metadata: {
+        size: '30x40cm',
+      },
       live: true,
       shippable: true,
       vatPercentage: new Big(24),
@@ -1368,6 +1374,9 @@ describe('products', () => {
     assert.deepStrictEqual(product, {
       sku: 'custom-map-print-30x40cm',
       name: undefined,
+      metadata: {
+        size: '30x40cm',
+      },
       live: true,
       shippable: true,
       vatPercentage: new Big(24),

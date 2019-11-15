@@ -5,6 +5,9 @@ const { calculateNetValue, calculateGrossValue } = require('./tax');
 const products = [
   {
     sku: 'custom-map-print-30x40cm',
+    metadata: {
+      size: '30x40cm',
+    },
     name: {
       'en-US': 'Map print 30x40cm',
       'fi-FI': 'Karttajuliste 30x40cm',
@@ -41,6 +44,9 @@ const products = [
   },
   {
     sku: 'custom-map-print-50x70cm',
+    metadata: {
+      size: '50x70cm',
+    },
     name: {
       'en-US': 'Map print 50x70cm',
       'fi-FI': 'Karttajuliste 50x70cm',
@@ -74,6 +80,9 @@ const products = [
   },
   {
     sku: 'custom-map-print-70x100cm',
+    metadata: {
+      size: '70x100cm',
+    },
     name: {
       'en-US': 'Map print 70x100cm',
       'fi-FI': 'Karttajuliste 70x100cm',
@@ -107,6 +116,9 @@ const products = [
   },
   {
     sku: 'custom-map-print-12x18inch',
+    metadata: {
+      size: '12x18inch',
+    },
     name: {
       'en-US': 'Map print 12x18inch',
       'fi-FI': 'Karttajuliste 12x18inch',
@@ -140,6 +152,9 @@ const products = [
   },
   {
     sku: 'custom-map-print-18x24inch',
+    metadata: {
+      size: '18x24inch',
+    },
     name: {
       'en-US': 'Map print 18x24inch',
       'fi-FI': 'Karttajuliste 18x24inch',
@@ -173,6 +188,9 @@ const products = [
   },
   {
     sku: 'custom-map-print-24x36inch',
+    metadata: {
+      size: '24x36inch',
+    },
     name: {
       'en-US': 'Map print 24x36inch',
       'fi-FI': 'Karttajuliste 24x36inch',
