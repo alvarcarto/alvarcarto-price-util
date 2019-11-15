@@ -5,7 +5,7 @@
 const rules = {
   MIN_NET_PRICE: (rule, item) => {
     const netValue = item.product.dynamicPrice
-      ? item.metadata.netValue
+      ? item.customisation.netValue
       : item.netValue;
 
     if (netValue < rule.payload) {

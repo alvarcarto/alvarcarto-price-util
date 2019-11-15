@@ -278,7 +278,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 4900,
         },
         quantity: 1,
@@ -322,7 +322,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: -4900,
         },
         quantity: 1,
@@ -335,7 +335,7 @@ describe('cases', () => {
     );
   });
 
-  it('gift card value missing metadata should throw', () => {
+  it('gift card value missing customisation should throw', () => {
     const cart = [
       {
         id: 'gift-card-value',
@@ -345,15 +345,15 @@ describe('cases', () => {
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /No metadata object found for dynamic priced item gift-card-value/
+      /No customisation object found for dynamic priced item gift-card-value/
     );
   });
 
-  it('gift card value missing metadata.netValue should throw', () => {
+  it('gift card value missing customisation.netValue should throw', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValuuuu: 1200,
         },
         quantity: 1,
@@ -362,7 +362,7 @@ describe('cases', () => {
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /No metadata.netValue found for dynamic priced item gift-card-value/
+      /No customisation.netValue found for dynamic priced item gift-card-value/
     );
   });
 
@@ -370,7 +370,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 0,
         },
         quantity: 1,
@@ -387,7 +387,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 999,
         },
         quantity: 1,
@@ -418,7 +418,7 @@ describe('cases', () => {
     const price = priceUtil.calculateItemPrice({
       id: 'gift-card-value',
       quantity: 1,
-      metadata: {
+      customisation: {
         netValue: 4900,
       },
     });
@@ -486,7 +486,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 1000,
         },
         quantity: 1,
@@ -902,7 +902,7 @@ describe('cases', () => {
       },
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 6900,
         },
         quantity: 1,
@@ -960,7 +960,7 @@ describe('cases', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 6900,
         },
         quantity: 1,
@@ -1228,7 +1228,7 @@ describe('currencies', () => {
     const cart = [
       {
         id: 'gift-card-value',
-        metadata: {
+        customisation: {
           netValue: 4900,
         },
         quantity: 1,

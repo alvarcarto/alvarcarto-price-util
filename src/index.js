@@ -82,7 +82,7 @@ function enrichAndValidateCartItems(cart, opts) {
       return item;
     }
 
-    const netPrice = new Big(item.metadata.netValue);
+    const netPrice = new Big(item.customisation.netValue);
     const newProduct = _.extend({}, product, {
       netPrices: {
         [opts.currency]: netPrice,
