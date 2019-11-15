@@ -54,7 +54,7 @@ function deepResolveLocale(obj, locale) {
   return newObj;
 }
 
-function getProduct(productId) {
+function getProduct(productSku) {
   var _opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   var opts = _.merge({
@@ -62,10 +62,10 @@ function getProduct(productId) {
   }, _opts);
 
   var product = _.find(products, function (p) {
-    return p.id === productId;
+    return p.sku === productSku;
   });
   if (!product) {
-    throw new Error('No such product with id: ' + productId);
+    throw new Error('No such product with sku: ' + productSku);
   }
 
   var localisedProduct = deepResolveLocale(product, opts.locale);
@@ -74,7 +74,7 @@ function getProduct(productId) {
 
 function calculateItemBreakdown(item, currency, taxPercentage) {
   if (!_.get(item, ['product', 'grossPrices', currency])) {
-    throw new Error('Item ' + item.id + ' does not have price in ' + currency + ' currency');
+    throw new Error('Item ' + item.sku + ' does not have price in ' + currency + ' currency');
   }
 
   var itemOriginalGrossPrice = item.product.grossPrices[currency].times(item.quantity);
@@ -115,7 +115,7 @@ function calculateExactCartTotals(cart, opts) {
 
 function enrichAndValidateCartItems(cart, opts) {
   var cartProducts = _.map(cart, function (item) {
-    var product = getProduct(item.id);
+    var product = getProduct(item.sku);
     return _.extend({}, item, { product: product });
   });
 
