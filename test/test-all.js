@@ -1362,4 +1362,38 @@ describe('products', () => {
       },
     });
   });
+
+  it('getProduct with unknown locale', () => {
+    const product = priceUtil.getProduct('custom-map-print-30x40cm', { locale: 'xx-XX' });
+    assert.deepStrictEqual(product, {
+      id: 'custom-map-print-30x40cm',
+      name: undefined,
+      live: true,
+      shippable: true,
+      vatPercentage: new Big(24),
+      discountClass: 0,
+      grossPrices: {
+        EUR: new Big(3900),
+        USD: new Big(4490),
+        JPY: new Big(4699),
+        AUD: new Big(6490),
+        GBP: new Big(3290),
+        CAD: new Big(5490),
+        SEK: new Big(41900),
+        DKK: new Big(28900),
+        NOK: new Big(39900),
+      },
+      netPrices: {
+        EUR: new Big(3900).div(1.24),
+        USD: new Big(4490).div(1.24),
+        JPY: new Big(4699).div(1.24),
+        AUD: new Big(6490).div(1.24),
+        GBP: new Big(3290).div(1.24),
+        CAD: new Big(5490).div(1.24),
+        SEK: new Big(41900).div(1.24),
+        DKK: new Big(28900).div(1.24),
+        NOK: new Big(39900).div(1.24),
+      },
+    });
+  });
 });
