@@ -5,8 +5,12 @@ const { calculateNetValue, calculateGrossValue } = require('./tax');
 const products = [
   {
     id: 'custom-map-print-30x40cm',
-    name: 'Map print 30x40cm',
+    name: {
+      'en-US': 'Map print 30x40cm',
+      'fi-FI': 'Karttajuliste 30x40cm',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -37,8 +41,12 @@ const products = [
   },
   {
     id: 'custom-map-print-50x70cm',
-    name: 'Map print 50x70cm',
+    name: {
+      'en-US': 'Map print 50x70cm',
+      'fi-FI': 'Karttajuliste 50x70cm',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -66,8 +74,12 @@ const products = [
   },
   {
     id: 'custom-map-print-70x100cm',
-    name: 'Map print 70x100cm',
+    name: {
+      'en-US': 'Map print 70x100cm',
+      'fi-FI': 'Karttajuliste 70x100cm',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -95,8 +107,12 @@ const products = [
   },
   {
     id: 'custom-map-print-12x18inch',
-    name: 'Map print 12x18inch',
+    name: {
+      'en-US': 'Map print 12x18inch',
+      'fi-FI': 'Karttajuliste 12x18inch',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -124,8 +140,12 @@ const products = [
   },
   {
     id: 'custom-map-print-18x24inch',
-    name: 'Map print 18x24inch',
+    name: {
+      'en-US': 'Map print 18x24inch',
+      'fi-FI': 'Karttajuliste 18x24inch',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -153,8 +173,12 @@ const products = [
   },
   {
     id: 'custom-map-print-24x36inch',
-    name: 'Map print 24x36inch',
+    name: {
+      'en-US': 'Map print 24x36inch',
+      'fi-FI': 'Karttajuliste 24x36inch',
+    },
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -182,11 +206,15 @@ const products = [
   },
   {
     id: 'physical-gift-card',
-    name: 'Premium gift card',
+    name: {
+      'en-US': 'Premium gift card',
+      'fi-FI': 'Premium lahjakortti',
+    },
     rules: [
       { type: 'MAX_QUANTITY', payload: 1 },
     ],
     live: true,
+    shippable: true,
     vatPercentage: new Big(24),
     discountClass: 1,
     grossPrices: {
@@ -215,11 +243,15 @@ const products = [
 
   {
     id: 'shipping-express',
-    name: 'Express shipping',
+    name: {
+      'en-US': 'Express shipping',
+      'fi-FI': 'Express-kuljetus',
+    },
     rules: [
       { type: 'MAX_QUANTITY', payload: 1 },
     ],
     live: true,
+    shippable: false,
     vatPercentage: new Big(24),
     discountClass: 1,
     grossPrices: {
@@ -237,11 +269,15 @@ const products = [
 
   {
     id: 'production-high-priority',
-    name: 'Priority production',
+    name: {
+      'en-US': 'Priority production',
+      'fi-FI': 'Priority valmistus',
+    },
     rules: [
       { type: 'MAX_QUANTITY', payload: 1 },
     ],
     live: true,
+    shippable: false,
     vatPercentage: new Big(24),
     discountClass: 1,
     grossPrices: {
@@ -270,9 +306,13 @@ const products = [
 
   {
     id: 'gift-card-value',
-    name: 'Gift card value',
+    name: {
+      'en-US': 'Gift card value',
+      'fi-FI': 'Lahjakortin arvo',
+    },
     discountClass: 1,
     live: true,
+    shippable: false,
     rules: [
       { type: 'MAX_QUANTITY', payload: 1 },
       { type: 'MIN_NET_PRICE', payload: 1000 },
@@ -283,7 +323,11 @@ const products = [
 
   {
     id: 'test-product-vat-0',
-    name: 'Test product VAT 0',
+    name: {
+      'en-US': 'Test product VAT 0',
+    },
+    live: false,
+    shippable: false,
     vatPercentage: new Big('0'),
     discountClass: 0,
     grossPrices: {
@@ -293,7 +337,11 @@ const products = [
   },
   {
     id: 'test-product-vat-10',
-    name: 'Test product VAT 10',
+    name: {
+      'en-US': 'Test product VAT 10',
+    },
+    live: false,
+    shippable: false,
     vatPercentage: new Big(10),
     discountClass: 0,
     grossPrices: {
@@ -303,7 +351,11 @@ const products = [
   },
   {
     id: 'test-product-vat-14',
-    name: 'Test product VAT 14',
+    name: {
+      'en-US': 'Test product VAT 14',
+    },
+    live: false,
+    shippable: false,
     vatPercentage: new Big(14),
     discountClass: 0,
     grossPrices: {
@@ -313,7 +365,11 @@ const products = [
   },
   {
     id: 'test-product-vat-24',
-    name: 'Test product VAT 24',
+    name: {
+      'en-US': 'Test product VAT 24',
+    },
+    live: false,
+    shippable: false,
     vatPercentage: new Big(24),
     discountClass: 0,
     grossPrices: {
@@ -323,7 +379,11 @@ const products = [
   },
   {
     id: 'test-map-30x40cm-vat-28',
-    name: 'Test map 30x40cm VAT 28',
+    name: {
+      'en-US': 'Test map 30x40cm VAT 28',
+    },
+    live: false,
+    shippable: false,
     vatPercentage: new Big(28),
     discountClass: 0,
     grossPrices: {

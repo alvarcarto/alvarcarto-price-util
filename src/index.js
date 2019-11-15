@@ -19,6 +19,37 @@ function taxesObjToArr(taxByP) {
   return _.sortBy(arr, 'taxPercentage');
 }
 
+// Transforms locale objects to strings with the given locale
+function deepResolveLocale(obj, locale) {
+  const newObj = {};
+
+  _.forEach(obj, (val, key) => {
+    const isLocaleObj = _.isPlainObject(val) && _.has(val, 'en-US');
+    if (isLocaleObj) {
+      newObj[key] = val[locale];
+    } else if (_.isPlainObject(val)) {
+      newObj[key] = deepResolveLocale(val, locale);
+    } else {
+      newObj[key] = val;
+    }
+  });
+  return newObj;
+}
+
+function getProduct(productId, _opts = {}) {
+  const opts = _.merge({
+    locale: 'en-US',
+  }, _opts);
+
+  const product = _.find(products, p => p.id === productId);
+  if (!product) {
+    throw new Error(`No such product with id: ${productId}`);
+  }
+
+  const localisedProduct = deepResolveLocale(product, opts.locale);
+  return localisedProduct;
+}
+
 function calculateItemBreakdown(item, currency, taxPercentage) {
   if (!_.get(item, ['product', 'grossPrices', currency])) {
     throw new Error(`Item ${item.id} does not have price in ${currency} currency`);
@@ -66,11 +97,7 @@ function calculateExactCartTotals(cart, opts) {
 
 function enrichAndValidateCartItems(cart, opts) {
   const cartProducts = _.map(cart, (item) => {
-    const product = _.find(products, p => p.id === item.id);
-    if (!product) {
-      throw new Error(`No such product with id: ${item.id}`);
-    }
-
+    const product = getProduct(item.id);
     return _.extend({}, item, { product });
   });
 
@@ -179,4 +206,5 @@ module.exports = {
   isEuCountry,
   isSupportedCurrency,
   getSupportedCurrencies,
+  getProduct,
 };
