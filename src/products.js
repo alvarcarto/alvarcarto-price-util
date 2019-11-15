@@ -4,7 +4,7 @@ const { calculateNetValue, calculateGrossValue } = require('./tax');
 
 const products = [
   {
-    id: 'custom-map-print-30x40cm',
+    sku: 'custom-map-print-30x40cm',
     name: {
       'en-US': 'Map print 30x40cm',
       'fi-FI': 'Karttajuliste 30x40cm',
@@ -40,7 +40,7 @@ const products = [
     },
   },
   {
-    id: 'custom-map-print-50x70cm',
+    sku: 'custom-map-print-50x70cm',
     name: {
       'en-US': 'Map print 50x70cm',
       'fi-FI': 'Karttajuliste 50x70cm',
@@ -73,7 +73,7 @@ const products = [
     },
   },
   {
-    id: 'custom-map-print-70x100cm',
+    sku: 'custom-map-print-70x100cm',
     name: {
       'en-US': 'Map print 70x100cm',
       'fi-FI': 'Karttajuliste 70x100cm',
@@ -106,7 +106,7 @@ const products = [
     },
   },
   {
-    id: 'custom-map-print-12x18inch',
+    sku: 'custom-map-print-12x18inch',
     name: {
       'en-US': 'Map print 12x18inch',
       'fi-FI': 'Karttajuliste 12x18inch',
@@ -139,7 +139,7 @@ const products = [
     },
   },
   {
-    id: 'custom-map-print-18x24inch',
+    sku: 'custom-map-print-18x24inch',
     name: {
       'en-US': 'Map print 18x24inch',
       'fi-FI': 'Karttajuliste 18x24inch',
@@ -172,7 +172,7 @@ const products = [
     },
   },
   {
-    id: 'custom-map-print-24x36inch',
+    sku: 'custom-map-print-24x36inch',
     name: {
       'en-US': 'Map print 24x36inch',
       'fi-FI': 'Karttajuliste 24x36inch',
@@ -205,7 +205,7 @@ const products = [
     },
   },
   {
-    id: 'physical-gift-card',
+    sku: 'physical-gift-card',
     name: {
       'en-US': 'Premium gift card',
       'fi-FI': 'Premium lahjakortti',
@@ -242,7 +242,7 @@ const products = [
   },
 
   {
-    id: 'shipping-express',
+    sku: 'shipping-express',
     name: {
       'en-US': 'Express shipping',
       'fi-FI': 'Express-kuljetus',
@@ -268,7 +268,7 @@ const products = [
   },
 
   {
-    id: 'production-high-priority',
+    sku: 'production-high-priority',
     name: {
       'en-US': 'Priority production',
       'fi-FI': 'Priority valmistus',
@@ -305,7 +305,7 @@ const products = [
   },
 
   {
-    id: 'gift-card-value',
+    sku: 'gift-card-value',
     name: {
       'en-US': 'Gift card value',
       'fi-FI': 'Lahjakortin arvo',
@@ -322,7 +322,7 @@ const products = [
   },
 
   {
-    id: 'test-product-vat-0',
+    sku: 'test-product-vat-0',
     name: {
       'en-US': 'Test product VAT 0',
     },
@@ -336,7 +336,7 @@ const products = [
     },
   },
   {
-    id: 'test-product-vat-10',
+    sku: 'test-product-vat-10',
     name: {
       'en-US': 'Test product VAT 10',
     },
@@ -350,7 +350,7 @@ const products = [
     },
   },
   {
-    id: 'test-product-vat-14',
+    sku: 'test-product-vat-14',
     name: {
       'en-US': 'Test product VAT 14',
     },
@@ -364,7 +364,7 @@ const products = [
     },
   },
   {
-    id: 'test-product-vat-24',
+    sku: 'test-product-vat-24',
     name: {
       'en-US': 'Test product VAT 24',
     },
@@ -378,7 +378,7 @@ const products = [
     },
   },
   {
-    id: 'test-map-30x40cm-vat-28',
+    sku: 'test-map-30x40cm-vat-28',
     name: {
       'en-US': 'Test map 30x40cm VAT 28',
     },
@@ -423,7 +423,7 @@ _.forEach(nonDynamicLive, (product) => {
     _.forEach(nonDynamicLive, (product2) => {
       const product2Currencies = _.keys(product2.grossPrices);
       if (!_.includes(product2Currencies, currency)) {
-        throw new Error(`Inconsistent currency definitions in products ${product.id} and ${product2.id}`);
+        throw new Error(`Inconsistent currency definitions in products ${product.sku} and ${product2.sku}`);
       }
     });
   });

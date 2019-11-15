@@ -8,7 +8,7 @@ function forEachCartItemAssert(cart, func) {
     _.forEach(itemErrs, (msg) => {
       if (msg) {
         const errItem = cart[itemIndex];
-        const err = new Error(`Error in cart item ${errItem.id} (index=${itemIndex}): ${msg}`);
+        const err = new Error(`Error in cart item ${errItem.sku} (index=${itemIndex}): ${msg}`);
         throw err;
       }
     });
@@ -17,11 +17,11 @@ function forEachCartItemAssert(cart, func) {
 
 function validateDynamicPrice(item) {
   if (!_.isPlainObject(item.customisation)) {
-    throw new Error(`No customisation object found for dynamic priced item ${item.id}`);
+    throw new Error(`No customisation object found for dynamic priced item ${item.sku}`);
   }
 
   if (!_.isFinite(item.customisation.netValue)) {
-    throw new Error(`No customisation.netValue found for dynamic priced item ${item.id}`);
+    throw new Error(`No customisation.netValue found for dynamic priced item ${item.sku}`);
   }
 }
 

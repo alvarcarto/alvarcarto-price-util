@@ -7,7 +7,7 @@ describe('cases', () => {
   it('one 30x40cm in cart', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 1,
       },
     ];
@@ -36,7 +36,7 @@ describe('cases', () => {
   it('one 30x40cm in cart shipped outside EU', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 1,
       },
     ];
@@ -65,7 +65,7 @@ describe('cases', () => {
   it('unit price for 3x 30x40cm in cart', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 3,
       },
     ];
@@ -94,15 +94,15 @@ describe('cases', () => {
   it('30x40cm, 50x70cm and 70x100cm in cart', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 1,
       },
       {
-        id: 'custom-map-print-50x70cm',
+        sku: 'custom-map-print-50x70cm',
         quantity: 2,
       },
       {
-        id: 'custom-map-print-70x100cm',
+        sku: 'custom-map-print-70x100cm',
         quantity: 1,
       },
     ];
@@ -131,15 +131,15 @@ describe('cases', () => {
   it('12x18inch, 18x24inch and 24x36inch in cart', () => {
     const cart = [
       {
-        id: 'custom-map-print-12x18inch',
+        sku: 'custom-map-print-12x18inch',
         quantity: 1,
       },
       {
-        id: 'custom-map-print-18x24inch',
+        sku: 'custom-map-print-18x24inch',
         quantity: 2,
       },
       {
-        id: 'custom-map-print-24x36inch',
+        sku: 'custom-map-print-24x36inch',
         quantity: 1,
       },
     ];
@@ -169,18 +169,18 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
       {
         quantity: 2,
-        id: 'custom-map-print-50x70cm',
+        sku: 'custom-map-print-50x70cm',
       },
       {
-        id: 'production-high-priority',
+        sku: 'production-high-priority',
         quantity: 1,
       },
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 1,
       },
     ];
@@ -209,19 +209,19 @@ describe('cases', () => {
   it('quantity above 1 for productionClass should not be accepted', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 1,
       },
       {
-        id: 'custom-map-print-50x70cm',
+        sku: 'custom-map-print-50x70cm',
         quantity: 2,
       },
       {
-        id: 'production-high-priority',
+        sku: 'production-high-priority',
         quantity: 2,
       },
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 1,
       },
     ];
@@ -235,7 +235,7 @@ describe('cases', () => {
   it('quantity above 1 for shippingClass should not be accepted', () => {
     const cart = [
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 2,
       },
     ];
@@ -249,7 +249,7 @@ describe('cases', () => {
   it('shipping should be free', () => {
     const cart = [
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 1,
       },
     ];
@@ -278,14 +278,14 @@ describe('cases', () => {
   it('gift card in cart', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 4900,
         },
         quantity: 1,
       },
       {
-        id: 'physical-gift-card',
+        sku: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -322,7 +322,7 @@ describe('cases', () => {
   it('negative gift card value should not be accepted', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: -4900,
         },
@@ -339,7 +339,7 @@ describe('cases', () => {
   it('gift card value missing customisation should throw', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         quantity: 1,
       },
     ];
@@ -353,7 +353,7 @@ describe('cases', () => {
   it('gift card value missing customisation.netValue should throw', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValuuuu: 1200,
         },
@@ -370,7 +370,7 @@ describe('cases', () => {
   it('zero gift card value should not be accepted', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 0,
         },
@@ -387,7 +387,7 @@ describe('cases', () => {
   it('too low gift card value should not be accepted', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 999,
         },
@@ -404,20 +404,20 @@ describe('cases', () => {
   it('Unknown cart item types should not be accepted', () => {
     const cart = [
       {
-        id: 'no-such-product',
+        sku: 'no-such-product',
         quantity: 1,
       },
     ];
 
     assert.throws(
       () => priceUtil.calculateCartPrice(cart),
-      /No such product with id: no-such-product/
+      /No such product with sku: no-such-product/
     );
   });
 
   it('item price calculation for gift card value should work', () => {
     const price = priceUtil.calculateItemPrice({
-      id: 'gift-card-value',
+      sku: 'gift-card-value',
       quantity: 1,
       customisation: {
         netValue: 4900,
@@ -448,7 +448,7 @@ describe('cases', () => {
 
   it('item price calculation for physical gift card should work', () => {
     const price = priceUtil.calculateItemPrice({
-      id: 'physical-gift-card',
+      sku: 'physical-gift-card',
       quantity: 1,
     });
 
@@ -476,7 +476,7 @@ describe('cases', () => {
 
   it('quantity is required for gift card', () => {
     assert.throws(
-      () => priceUtil.calculateItemPrice({ id: 'gift-card-value', value: 4900 }),
+      () => priceUtil.calculateItemPrice({ sku: 'gift-card-value', value: 4900 }),
       /Item quantity should be an integer/
     );
   });
@@ -486,14 +486,14 @@ describe('cases', () => {
   it('multiple gift cards in cart', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 1000,
         },
         quantity: 1,
       },
       {
-        id: 'physical-gift-card',
+        sku: 'physical-gift-card',
         quantity: 3,
       },
     ];
@@ -507,7 +507,7 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 'a',
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -521,15 +521,15 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
       {
         quantity: 2,
-        id: 'custom-map-print-50x70cm',
+        sku: 'custom-map-print-50x70cm',
       },
       {
         quantity: 1,
-        id: 'custom-map-print-70x100cm',
+        sku: 'custom-map-print-70x100cm',
       },
     ];
 
@@ -575,21 +575,21 @@ describe('cases', () => {
       // 10€ promotion should be used for this VAT 0 product
       {
         quantity: 1,
-        id: 'test-product-vat-0',
+        sku: 'test-product-vat-0',
       },
       // 39 € promotion should be used for this VAT 24 print
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
       // 0.2€ promotion should be used for this VAT 10 product
       {
         quantity: 1,
-        id: 'test-product-vat-10',
+        sku: 'test-product-vat-10',
       },
       {
         quantity: 1,
-        id: 'test-product-vat-24',
+        sku: 'test-product-vat-24',
       },
     ];
 
@@ -646,7 +646,7 @@ describe('cases', () => {
     // Price: 8 * 39€ = 312€
     const cart = _.times(8, () => ({
       quantity: 1,
-      id: 'custom-map-print-30x40cm',
+      sku: 'custom-map-print-30x40cm',
     }));
 
     const promotion = {
@@ -702,7 +702,7 @@ describe('cases', () => {
       {
         // Price: 3 * $44.9€ = $134.70
         quantity: 3,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -748,7 +748,7 @@ describe('cases', () => {
       {
         // Price: 39€
         quantity: 2,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -793,7 +793,7 @@ describe('cases', () => {
       {
         // Price: 39€
         quantity: 2,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -837,16 +837,16 @@ describe('cases', () => {
   it('promotion should not affect shipping or production class prices', () => {
     const cart = [
       {
-        id: 'production-high-priority',
+        sku: 'production-high-priority',
         quantity: 1,
       },
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 1,
       },
       {
         quantity: 1,
-        id: 'custom-map-print-70x100cm',
+        sku: 'custom-map-print-70x100cm',
       },
     ];
 
@@ -890,26 +890,26 @@ describe('cases', () => {
   it('PLATINUM promotion allows discount for any product', () => {
     const cart = [
       {
-        id: 'production-high-priority',
+        sku: 'production-high-priority',
         quantity: 1,
       },
       {
-        id: 'shipping-express',
+        sku: 'shipping-express',
         quantity: 1,
       },
       {
         quantity: 1,
-        id: 'custom-map-print-70x100cm',
+        sku: 'custom-map-print-70x100cm',
       },
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 6900,
         },
         quantity: 1,
       },
       {
-        id: 'physical-gift-card',
+        sku: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -960,14 +960,14 @@ describe('cases', () => {
   it('regular promotions should not allow discount for gift cards', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 6900,
         },
         quantity: 1,
       },
       {
-        id: 'physical-gift-card',
+        sku: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -1013,7 +1013,7 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -1035,7 +1035,7 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -1057,7 +1057,7 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -1107,7 +1107,7 @@ describe('cases', () => {
     const cart = [
       {
         quantity: 20,
-        id: 'test-map-30x40cm-vat-28',
+        sku: 'test-map-30x40cm-vat-28',
         // Other fields are not used
       },
     ];
@@ -1148,7 +1148,7 @@ describe('currencies', () => {
   it('one 12x18inch with USD', () => {
     const cart = [
       {
-        id: 'custom-map-print-12x18inch',
+        sku: 'custom-map-print-12x18inch',
         quantity: 1,
       },
     ];
@@ -1177,7 +1177,7 @@ describe('currencies', () => {
   it('purchase with JPY', () => {
     const cart = [
       {
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
         quantity: 1,
       },
     ];
@@ -1207,7 +1207,7 @@ describe('currencies', () => {
     const cart = [
       {
         quantity: 1,
-        id: 'custom-map-print-30x40cm',
+        sku: 'custom-map-print-30x40cm',
       },
     ];
 
@@ -1228,14 +1228,14 @@ describe('currencies', () => {
   it('gift card with GBP currency', () => {
     const cart = [
       {
-        id: 'gift-card-value',
+        sku: 'gift-card-value',
         customisation: {
           netValue: 4900,
         },
         quantity: 1,
       },
       {
-        id: 'physical-gift-card',
+        sku: 'physical-gift-card',
         quantity: 1,
       },
     ];
@@ -1298,7 +1298,7 @@ describe('products', () => {
   it('getProduct with default locale', () => {
     const product = priceUtil.getProduct('custom-map-print-30x40cm');
     assert.deepStrictEqual(product, {
-      id: 'custom-map-print-30x40cm',
+      sku: 'custom-map-print-30x40cm',
       name: 'Map print 30x40cm',
       live: true,
       shippable: true,
@@ -1332,7 +1332,7 @@ describe('products', () => {
   it('getProduct with fi-FI locale', () => {
     const product = priceUtil.getProduct('custom-map-print-30x40cm', { locale: 'fi-FI' });
     assert.deepStrictEqual(product, {
-      id: 'custom-map-print-30x40cm',
+      sku: 'custom-map-print-30x40cm',
       name: 'Karttajuliste 30x40cm',
       live: true,
       shippable: true,
@@ -1366,7 +1366,7 @@ describe('products', () => {
   it('getProduct with unknown locale', () => {
     const product = priceUtil.getProduct('custom-map-print-30x40cm', { locale: 'xx-XX' });
     assert.deepStrictEqual(product, {
-      id: 'custom-map-print-30x40cm',
+      sku: 'custom-map-print-30x40cm',
       name: undefined,
       live: true,
       shippable: true,

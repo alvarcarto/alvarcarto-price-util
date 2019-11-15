@@ -36,14 +36,14 @@ function deepResolveLocale(obj, locale) {
   return newObj;
 }
 
-function getProduct(productId, _opts = {}) {
+function getProduct(productSku, _opts = {}) {
   const opts = _.merge({
     locale: 'en-US',
   }, _opts);
 
-  const product = _.find(products, p => p.id === productId);
+  const product = _.find(products, p => p.sku === productSku);
   if (!product) {
-    throw new Error(`No such product with id: ${productId}`);
+    throw new Error(`No such product with sku: ${productSku}`);
   }
 
   const localisedProduct = deepResolveLocale(product, opts.locale);
@@ -52,7 +52,7 @@ function getProduct(productId, _opts = {}) {
 
 function calculateItemBreakdown(item, currency, taxPercentage) {
   if (!_.get(item, ['product', 'grossPrices', currency])) {
-    throw new Error(`Item ${item.id} does not have price in ${currency} currency`);
+    throw new Error(`Item ${item.sku} does not have price in ${currency} currency`);
   }
 
   const itemOriginalGrossPrice = item.product.grossPrices[currency].times(item.quantity);
@@ -97,7 +97,7 @@ function calculateExactCartTotals(cart, opts) {
 
 function enrichAndValidateCartItems(cart, opts) {
   const cartProducts = _.map(cart, (item) => {
-    const product = getProduct(item.id);
+    const product = getProduct(item.sku);
     return _.extend({}, item, { product });
   });
 
