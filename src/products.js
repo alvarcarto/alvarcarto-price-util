@@ -228,9 +228,6 @@ const products = [
       'en-US': 'Premium gift card',
       'fi-FI': 'Premium lahjakortti',
     },
-    rules: [
-      { type: 'MAX_QUANTITY', payload: 1 },
-    ],
     live: true,
     shippable: true,
     vatPercentage: new Big(24),
@@ -332,7 +329,6 @@ const products = [
     live: true,
     shippable: false,
     rules: [
-      { type: 'MAX_QUANTITY', payload: 1 },
       { type: 'MIN_NET_PRICE', payload: 1000 },
     ],
     vatPercentage: new Big('0'),

@@ -490,17 +490,41 @@ describe('cases', () => {
         customisation: {
           netValue: 1000,
         },
-        quantity: 1,
+        quantity: 3,
       },
       {
         sku: 'physical-gift-card',
         quantity: 3,
       },
     ];
-    assert.throws(
-      () => priceUtil.calculateCartPrice(cart),
-      /Item physical-gift-card max allowed quantity is 1 but found 3/
-    );
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepStrictEqual(price, {
+      value: 5070,
+      currency: 'EUR',
+      zeroDecimalCurrency: false,
+      label: '50,70 €',
+      humanValue: '50.70',
+      net: {
+        value: 4669,
+        label: '46,69 €',
+        humanValue: '46.69'
+      },
+      taxes: [
+        {
+          value: 0,
+          label: '0,00 €',
+          humanValue: '0.00',
+          taxPercentage: 0,
+        },
+        {
+          value: 401,
+          label: '4,01 €',
+          humanValue: '4.01',
+          taxPercentage: 24,
+        },
+      ],
+    });
   });
 
   it('invalid quantity should throw an error', () => {
