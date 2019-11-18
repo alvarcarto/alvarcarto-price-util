@@ -226,7 +226,6 @@ var products = [{
     'en-US': 'Premium gift card',
     'fi-FI': 'Premium lahjakortti'
   },
-  rules: [{ type: 'MAX_QUANTITY', payload: 1 }],
   live: true,
   shippable: true,
   vatPercentage: new Big(24),
@@ -317,7 +316,7 @@ var products = [{
   discountClass: 1,
   live: true,
   shippable: false,
-  rules: [{ type: 'MAX_QUANTITY', payload: 1 }, { type: 'MIN_NET_PRICE', payload: 1000 }],
+  rules: [{ type: 'MIN_NET_PRICE', payload: 1000 }],
   vatPercentage: new Big('0'),
   dynamicPrice: true
 }, {
