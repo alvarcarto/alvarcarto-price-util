@@ -517,6 +517,18 @@ describe('cases', () => {
     );
   });
 
+  it('invalid quantity should be at least 1', () => {
+    assert.throws(
+      () => priceUtil.calculateCartPrice([{ quantity: 0, sku: 'custom-map-print-30x40cm' }]),
+      /Item quantity must be at least 1/
+    );
+
+    assert.throws(
+      () => priceUtil.calculateCartPrice([{ quantity: -1, sku: 'custom-map-print-30x40cm' }]),
+      /Item quantity must be at least 1/
+    );
+  });
+
   it('simple static discount promotion', () => {
     const cart = [
       {

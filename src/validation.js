@@ -33,6 +33,10 @@ function validateCartItem(item) {
   if (!_.isInteger(item.quantity)) {
     throw new Error('Item quantity should be an integer');
   }
+
+  if (item.quantity < 1) {
+    throw new Error('Item quantity must be at least 1');
+  }
 }
 
 function validateCart(cart) {
