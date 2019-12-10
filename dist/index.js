@@ -44,7 +44,7 @@ function deepResolveLocale(obj, locale) {
   _.forEach(obj, function (val, key) {
     var isLocaleObj = _.isPlainObject(val) && _.has(val, 'en-US');
     if (isLocaleObj) {
-      newObj[key] = val[locale];
+      newObj[key] = !_.isUndefined(val[locale]) ? val[locale] : val['en-US'];
     } else if (_.isPlainObject(val)) {
       newObj[key] = deepResolveLocale(val, locale);
     } else {
