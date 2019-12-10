@@ -541,7 +541,7 @@ describe('cases', () => {
       net: {
         value: 4669,
         label: '46,69 €',
-        humanValue: '46.69'
+        humanValue: '46.69',
       },
       taxes: [
         {
