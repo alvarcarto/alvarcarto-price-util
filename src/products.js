@@ -7,6 +7,7 @@ const products = [
     sku: 'custom-map-print-30x40cm',
     metadata: {
       size: '30x40cm',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 30x40cm',
@@ -46,6 +47,7 @@ const products = [
     sku: 'custom-map-print-50x70cm',
     metadata: {
       size: '50x70cm',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 50x70cm',
@@ -82,6 +84,7 @@ const products = [
     sku: 'custom-map-print-70x100cm',
     metadata: {
       size: '70x100cm',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 70x100cm',
@@ -118,6 +121,7 @@ const products = [
     sku: 'custom-map-print-12x18inch',
     metadata: {
       size: '12x18inch',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 12x18inch',
@@ -154,6 +158,7 @@ const products = [
     sku: 'custom-map-print-18x24inch',
     metadata: {
       size: '18x24inch',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 18x24inch',
@@ -190,6 +195,7 @@ const products = [
     sku: 'custom-map-print-24x36inch',
     metadata: {
       size: '24x36inch',
+      material: 'paper',
     },
     name: {
       'en-US': 'Map print 24x36inch',
@@ -220,6 +226,80 @@ const products = [
       SEK: new Big(73900),
       DKK: new Big(51900),
       NOK: new Big(69900),
+    },
+  },
+  {
+    sku: 'custom-map-plywood-30x40cm',
+    metadata: {
+      size: '30x40cm',
+      material: 'plywood',
+    },
+    name: {
+      'en-US': '6mm plywood map 30x40cm',
+      'fi-FI': '6mm vanerikartta 30x40cm',
+    },
+    live: true,
+    shippable: true,
+    vatPercentage: new Big(24),
+    discountClass: 0,
+    grossPrices: {
+      /*
+      59 EUR = 65.31 USD ~ *64.9 USD*  (= 58.63 EUR)
+      59 EUR = 7094.94 JPY ~ *7099 JPY*  (= 59.03 EUR)
+      59 EUR = 95.61 AUD ~ *94.9 AUD*  (= 58.56 EUR)
+      59 EUR = 49.70 GBP ~ *49.9 GBP*  (= 59.23 EUR)
+      59 EUR = 86.40 CAD ~ *84.9 CAD*  (= 57.98 EUR)
+      59 EUR = 623.16 SEK ~ *619 SEK*  (= 58.61 EUR)
+      59 EUR = 440.89 DKK ~ *439 DKK*  (= 58.75 EUR)
+      59 EUR = 597.53 NOK ~ *599 NOK*  (= 59.15 EUR)
+      */
+
+      EUR: new Big(5900),
+      USD: new Big(6490),
+      JPY: new Big(7099),
+      AUD: new Big(9490),
+      GBP: new Big(4990),
+      CAD: new Big(8490),
+      SEK: new Big(61900),
+      DKK: new Big(43900),
+      NOK: new Big(59900),
+    },
+  },
+  {
+    sku: 'custom-map-plywood-50x70cm',
+    metadata: {
+      size: '50x70cm',
+      material: 'plywood',
+    },
+    name: {
+      'en-US': '6mm plywood map 50x70cm',
+      'fi-FI': '6mm vanerikartta 50x70cm',
+    },
+    live: true,
+    shippable: true,
+    vatPercentage: new Big(24),
+    discountClass: 0,
+    grossPrices: {
+      /*
+      119 EUR = 131.74 USD ~ *129 USD*  (= 116.53 EUR)
+      119 EUR = 14310.14 JPY ~ *14299 JPY*  (= 118.91 EUR)
+      119 EUR = 192.85 AUD ~ *194.9 AUD*  (= 120.27 EUR)
+      119 EUR = 100.25 GBP ~ *99.9 GBP*  (= 118.58 EUR)
+      119 EUR = 174.26 CAD ~ *174.9 CAD*  (= 119.44 EUR)
+      119 EUR = 1256.87 SEK ~ *1259 SEK*  (= 119.20 EUR)
+      119 EUR = 889.25 DKK ~ *889 DKK*  (= 118.97 EUR)
+      119 EUR = 1205.19 NOK ~ *1209 NOK*  (= 119.38 EUR)
+      */
+
+      EUR: new Big(11900),
+      USD: new Big(12900),
+      JPY: new Big(14299),
+      AUD: new Big(19490),
+      GBP: new Big(9990),
+      CAD: new Big(17490),
+      SEK: new Big(125900),
+      DKK: new Big(88900),
+      NOK: new Big(120900),
     },
   },
   {

@@ -128,6 +128,39 @@ describe('cases', () => {
     });
   });
 
+  it('30x40cm and 50x70cm plywood in cart', () => {
+    const cart = [
+      {
+        sku: 'custom-map-plywood-30x40cm',
+        quantity: 1,
+      },
+      {
+        sku: 'custom-map-plywood-50x70cm',
+        quantity: 1,
+      },
+    ];
+
+    const price = priceUtil.calculateCartPrice(cart);
+    assert.deepStrictEqual(price, {
+      value: 17800,
+      humanValue: '178.00',
+      currency: 'EUR',
+      zeroDecimalCurrency: false,
+      label: '178,00 €',
+      net: {
+        value: 14355,
+        humanValue: '143.55',
+        label: '143,55 €',
+      },
+      taxes: [{
+        taxPercentage: 24,
+        value: 3445,
+        humanValue: '34.45',
+        label: '34,45 €',
+      }],
+    });
+  });
+
   it('12x18inch, 18x24inch and 24x36inch in cart', () => {
     const cart = [
       {
@@ -1337,6 +1370,7 @@ describe('products', () => {
       sku: 'custom-map-print-30x40cm',
       name: 'Map print 30x40cm',
       metadata: {
+        material: 'paper',
         size: '30x40cm',
       },
       live: true,
@@ -1374,6 +1408,7 @@ describe('products', () => {
       sku: 'custom-map-print-30x40cm',
       name: 'Karttajuliste 30x40cm',
       metadata: {
+        material: 'paper',
         size: '30x40cm',
       },
       live: true,
@@ -1409,8 +1444,9 @@ describe('products', () => {
     const product = priceUtil.getProduct('custom-map-print-30x40cm', { locale: 'xx-XX' });
     assert.deepStrictEqual(product, {
       sku: 'custom-map-print-30x40cm',
-      name: undefined,
+      name: 'Map print 30x40cm',
       metadata: {
+        material: 'paper',
         size: '30x40cm',
       },
       live: true,
