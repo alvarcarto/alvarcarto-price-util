@@ -235,8 +235,8 @@ const products = [
       material: 'plywood',
     },
     name: {
-      'en-US': '6mm plywood map 30x40cm',
-      'fi-FI': '6mm vanerikartta 30x40cm',
+      'en-US': 'Plywood map 30x40cm (6mm paksu)',
+      'fi-FI': 'Vanerikartta 30x40cm (6mm paksu)',
     },
     live: true,
     shippable: true,
@@ -272,8 +272,8 @@ const products = [
       material: 'plywood',
     },
     name: {
-      'en-US': '6mm plywood map 50x70cm',
-      'fi-FI': '6mm vanerikartta 50x70cm',
+      'en-US': 'Plywood map 50x70cm (6mm thick)',
+      'fi-FI': 'Vanerikartta 50x70cm (6mm paksu)',
     },
     live: true,
     shippable: true,
@@ -309,8 +309,8 @@ const products = [
       material: 'plywood',
     },
     name: {
-      'en-US': '6mm plywood map 12x18inch',
-      'fi-FI': '6mm vanerikartta 12x18inch',
+      'en-US': 'Plywood map 12x18" (0.24" thick)',
+      'fi-FI': 'Vanerikartta 12x18" (0.24" paksu)',
     },
     live: true,
     shippable: true,
@@ -346,8 +346,8 @@ const products = [
       material: 'plywood',
     },
     name: {
-      'en-US': 'Plywood map 18x24inch (0.24inch thick)',
-      'fi-FI': '6mm vanerikartta 18x24inch',
+      'en-US': 'Plywood map 18x24" (0.24" thick)',
+      'fi-FI': 'Vanerikartta 18x24" (0.24" paksu)',
     },
     live: true,
     shippable: true,
