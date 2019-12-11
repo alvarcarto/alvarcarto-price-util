@@ -303,6 +303,80 @@ const products = [
     },
   },
   {
+    sku: 'custom-map-plywood-12x18inch',
+    metadata: {
+      size: '12x18inch',
+      material: 'plywood',
+    },
+    name: {
+      'en-US': '6mm plywood map 12x18inch',
+      'fi-FI': '6mm vanerikartta 12x18inch',
+    },
+    live: true,
+    shippable: true,
+    vatPercentage: new Big(24),
+    discountClass: 0,
+    grossPrices: {
+      /*
+      69 EUR = 76.48 USD ~ *74.9 USD*  (= 67.57 EUR)
+      69 EUR = 8315.41 JPY ~ *8299 JPY*  (= 68.86 EUR)
+      69 EUR = 112.13 AUD ~ *109 AUD*  (= 67.07 EUR)
+      69 EUR = 58.31 GBP ~ *57.9 GBP*  (= 68.51 EUR)
+      69 EUR = 101.24 CAD ~ *99 CAD*  (= 67.47 EUR)
+      69 EUR = 726.27 SEK ~ *729 SEK*  (= 69.26 EUR)
+      69 EUR = 515.64 DKK ~ *519 DKK*  (= 69.45 EUR)
+      69 EUR = 701.60 NOK ~ *699 NOK*  (= 68.74 EUR)
+      */
+
+      EUR: new Big(6900),
+      USD: new Big(7490),
+      JPY: new Big(8299),
+      AUD: new Big(10900),
+      GBP: new Big(5790),
+      CAD: new Big(9900),
+      SEK: new Big(72900),
+      DKK: new Big(51900),
+      NOK: new Big(69900),
+    },
+  },
+  {
+    sku: 'custom-map-plywood-18x24inch',
+    metadata: {
+      size: '18x24inch',
+      material: 'plywood',
+    },
+    name: {
+      'en-US': 'Plywood map 18x24inch (0.24inch thick)',
+      'fi-FI': '6mm vanerikartta 18x24inch',
+    },
+    live: true,
+    shippable: true,
+    vatPercentage: new Big(24),
+    discountClass: 0,
+    grossPrices: {
+      /*
+      109 EUR = 120.82 USD ~ *119 USD*  (= 107.36 EUR)
+      109 EUR = 13135.94 JPY ~ *13099 JPY*  (= 108.69 EUR)
+      109 EUR = 177.14 AUD ~ *174.9 AUD*  (= 107.62 EUR)
+      109 EUR = 92.12 GBP ~ *91.9 GBP*  (= 108.74 EUR)
+      109 EUR = 159.93 CAD ~ *159 CAD*  (= 108.37 EUR)
+      109 EUR = 1147.30 SEK ~ *1149 SEK*  (= 109.16 EUR)
+      109 EUR = 814.56 DKK ~ *809 DKK*  (= 108.26 EUR)
+      109 EUR = 1108.32 NOK ~ *1109 NOK*  (= 109.07 EUR)
+      */
+
+      EUR: new Big(10900),
+      USD: new Big(11900),
+      JPY: new Big(13099),
+      AUD: new Big(17490),
+      GBP: new Big(9190),
+      CAD: new Big(15900),
+      SEK: new Big(114900),
+      DKK: new Big(80900),
+      NOK: new Big(110900),
+    },
+  },
+  {
     sku: 'physical-gift-card',
     name: {
       'en-US': 'Premium gift card',
