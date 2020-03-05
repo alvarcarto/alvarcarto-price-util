@@ -233,7 +233,7 @@ var products = [{
     material: 'plywood'
   },
   name: {
-    'en-US': 'Plywood map 30x40cm (6mm paksu)',
+    'en-US': 'Plywood map 30x40cm (6mm thick)',
     'fi-FI': 'Vanerikartta 30x40cm (6mm paksu)'
   },
   live: true,
